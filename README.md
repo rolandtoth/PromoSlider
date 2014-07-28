@@ -1,0 +1,4 @@
+PromoSlider
+===========
+
+JavaScript Image Slider
