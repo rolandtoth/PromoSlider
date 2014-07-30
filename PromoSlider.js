@@ -1,7 +1,7 @@
 /*!
  * PromoSlider v1.0 - JavaScript Image Slider
- * https://github.com/rolandtoth/promoSlider
- * last update: 2014.07.28.
+ * https://github.com/rolandtoth/PromoSlider
+ * last update: 2014.07.30.
  *
  * Licensed under the MIT license
  * Copyright 2014 Roland Toth (tpr)
@@ -11,6 +11,8 @@
 /*global window, document */
 /*jslint browser: true */
 /*jslint sloppy: true */
+
+var isWebkit = document.addEventListener && document.documentElement.style.hasOwnProperty('WebkitAppearance');
 
 var supportsTransitions = (function () {
     var s = document.createElement('p').style,
@@ -152,14 +154,24 @@ function removeEvent(target, type, handler) {
 
 function addClass(target, className, replace) {
 
-    var elem = document.querySelector(target);
+    if (target) {
 
-    if (elem) {
         if (replace) {
-            elem.className = className;
+            target.className = className;
+
         } else {
-            elem.className += ' ' + className;
+
+            if (target.className && target.className.indexOf(className) !== -1) {
+                return false;
+            }
+            target.className += ' ' + className;
         }
+    }
+}
+
+function removeClass(target, className) {
+    if (target && target.className) {
+        target.className = target.className.replace(className, '');
     }
 }
 
@@ -182,14 +194,14 @@ function makeElement(tag, properties, text) {
     return obj;
 }
 
-function callCallBack(callback, event, obj, slide) {
+function callCallBack(callback, event, obj, slide, state) {
 
     var e = event || window.event;
     slide = slide || null;
     obj = obj || null;
 
     if (typeof callback === 'function') {
-        callback(e, obj, slide + 1);
+        callback(e, obj, slide + 1, state);
     }
 }
 
@@ -272,198 +284,148 @@ function PromoSlider(o) {
 
     s.addStyles = function () {
 
-        var styles, mainPadding = '48px';
-
-        if (!o.styles) {
+        if (document.getElementById('promoStyle')) {
             return false;
         }
 
+        var styles, mainPadding = '48px';
+
         styles = [
-            '#promoContainer a {background: transparent;}',
-            '#promoContainer {' + opacity(0) + 'position: fixed; width: 100%; height: 100%; text-align: center; top: 0; left: 0; z-index: 9991; pointer-events: none;}',
-            '#promoContainer * {color: #fff; text-decoration: none;}',
-            '#promoOverlay {position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 9990; background: #000;' + opacity(70) + 'pointer-events: all;}',
-            '#promoContent {position: relative; display: block; max-width: ' + o.width + '; max-height: ' + o.height + '; z-index: 9992; pointer-events: all; margin: 0 auto; top: 12%;}',
-            '#promoContent:after {content: ""; display: block; padding-top: ' + o.ratio * 100 + '%;}',
-            '#promoSlidesWrap {height: 100%; top: 0; bottom: 0; right: 0; left: 0; overflow: hidden; position: absolute;}',
-            '#promoSlides {list-style: none; margin: 0; padding: 0; width: 100%; height: 100%; position: relative;}',
-            '.embed #promoSlidesWrap {max-width: none; height: 100%;}',
-            '#promoContent.embed * {color: #000;}',
-            '#promoContent.embed .promoCaption {color: #fff;}',
-            '#promoContent.embed {margin: ' + mainPadding + '; clear: both; position: relative; top: ' + mainPadding + '; left: auto; right: auto; bottom: auto;}',
-            '.promoSlide {width: 100%; height: 100%; display: block; position: relative; text-align: center;}',
+            '.promoContainer a {background: transparent; outline: none !important;}',
+            '.promoContainer {' + opacity(0) + 'position: fixed; width: 100%; height: 100%; text-align: center; top: 0; left: 0; z-index: 9991; pointer-events: none;}',
+            '.promoContainer * {color: #fff; text-decoration: none;}',
+            '.promoContainer.single .promoSlides {width: 100% !important; left: 0 !important;}',
+            '.promoContainer.single .promoSlide {width: 100% !important; visibility: visible;' + prefixer('transition: none !important;') + '}',
+            '.promoOverlay {position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 9990; background: #000;' + opacity(70) + 'pointer-events: all;}',
+            '.promoContent {position: relative; display: block; z-index: 9992; pointer-events: all; margin: 0 auto; top: 15%;}',
+            '.promoContent:after {content: ""; display: block; padding-top: ' + o.ratio * 100 + '%;}',
+            '.promoSlidesWrap {height: 100%; top: 0; bottom: 0; right: 0; left: 0; overflow: hidden; position: absolute;}',
+            '.promoSlides {list-style: none; margin: 0; padding: 0; width: 100%; height: 100%; position: relative;}',
+            '.embed .promoSlidesWrap {max-width: none; height: 100%;}',
+            '.promoContent.embed * {color: #000;}',
+            '.promoContent.embed {margin: 20px; clear: both; position: relative; top: 0; left: auto; right: auto; bottom: auto; z-index: 9980;}',
+            '.promoContent.embed .promoCaption {color: #fff;}',
+            '.promoSlide {' + prefixer('transform-origin: center;') + 'width: 100%; height: 100%; display: block; position: relative; text-align: center;}',
             '.slideContent {height: 100%; overflow: hidden;}',
             '.slideContentInner {width: auto; height: auto; display: inline-block; max-width: 100%; max-height: 100%; position: relative;}',
             '.promoImage, .promoLink {position: relative; display: inline-block; max-width: 100%; max-height: 100%; margin: 0 auto;}',
             '.embed .promoLink[href="#close"] {cursor: default;}',
-            '.promoImage {vertical-align: middle;}',
+            '.promoImage {vertical-align: middle; border: none;}',
             verticalCenter('.slideContent'),
-            '#promoClose {position: absolute; top: -' + mainPadding + '; right: -16px; display: block; text-align: right; padding: 0 16px; z-index: 9992; font: normal 17px/' + mainPadding + ' sans-serif;' + opacity(75) + 'transition: 0.25s opacity; z-index: 9998;}',
-            '#promoContent:hover #promoClose:hover {' + opacity(99) + 'cursor: pointer;}',
-            '#promoCounter {position: absolute; top: -' + mainPadding + '; left: 0; margin: 0; z-index: 9997; font: normal 17px/' + mainPadding + ' sans-serif; display: inline-block;' + opacity(99) + '}',
+            '.promoClose {position: absolute; top: -' + mainPadding + '; right: -16px; display: block; text-align: right; padding: 0 16px; z-index: 9992; font: normal 17px/' + mainPadding + ' sans-serif;' + opacity(75) + 'transition: 0.25s opacity; z-index: 9998;}',
+            '.promoClose.inside {top: 0; right: 0;}',
+            '.promoCounter {position: absolute; top: -' + mainPadding + '; left: 0; margin: 0; z-index: 9997; font: normal 15px/' + mainPadding + ' sans-serif; display: inline-block;' + opacity(99) + '}',
             '.promoHidden {' + opacity(0, true) + 'pointer-events: none !important;}',
-            '.promoCaption {width: 100%; box-sizing: border-box; position: absolute; bottom: 0; padding: 20px 24px; margin: 0; background: rgba(0,0,0,0.5); line-height: 1.5;}'
+            '.promoCaption {width: 100%; box-sizing: border-box; position: absolute; bottom: 0; padding: 20px 24px; margin: 0; background: rgba(0,0,0,0.5); line-height: 1.5;}',
+            '.promoCaption.top {top: 0; bottom: auto;}',
+            '.actionButtons {width: 100%; position: absolute; top: 100%; padding: 8px 0 0; text-align: center; z-index: 9997;}',
+            '.actionButtons.top {top: -' + mainPadding + '; bottom: auto;}',
+            '.actionButtons a {display: inline-block; text-decoration: underline; padding: 4px 8px; margin: 0 5px;}',
+            '.promoSlides {width: 400%; left: -100%;}',
+            '.promoNext, .promoPrev {position: absolute; top: 0; left: -' + mainPadding + '; width: ' + mainPadding + '; padding: 0; text-align: center; height: 100%; display: inline-block;' + opacity(50) + prefixer('transition: opacity 0.25s;') + 'z-index: 9997; -webkit-transform: translateZ(0);}',
+            '.promoNext {left: auto; right: -' + mainPadding + ';}',
+            '.promoNext span, .promoPrev span {font: normal 64px/0 sans-serif; display: inline-block; position: absolute; left: 0; top: 48.7%; width: 100%;}',
+            '.promoNext.inside {right: 0;}',
+            '.promoPrev.inside {left: 0;}',
+            '.promoPager.inside {top: 0; bottom: auto;}',
+            '.promoPager.bottom {top: auto; bottom: -' + mainPadding + ';}',
+            '.promoPager.inside.bottom {top: auto; bottom: 0;}',
+            '.promoCounter.inside {top: 0; left: 16px;}',
+            '.promoContent:hover .promoNext:hover, .promoContent:hover .promoPrev:hover {' + opacity(99) + '}',
+            '.promoSlide {width: 100%; float: left;' + prefixer('transition: width ' + o.slideDuration + 's ' + o.easing + ';') + '}',
+            '.promoSlide:first-child {overflow: hidden; width: 1px; visibility: hidden; margin-left: -1px;}',
+            '.promoSlide:first-child + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {width: 25%;' + opacity(99) + '}',
+            '.promoSlide:first-child + .promoSlide + .promoSlide {' + prefixer('transition: none;') + '}',
+            '.promoPager {position: absolute; top: -' + mainPadding + '; left: 20%; width: 60%; text-align: center; z-index: 9997;}',
+            '.promoPager a {display: inline-block; position: relative; padding: 0 6px; margin: 0;' + opacity(50) + 'font: normal 36px/' + mainPadding + ' sans-serif;' + prefixer('transition: opacity ' + o.slideDuration + 's ease-out;') + '-webkit-transform: translateZ(0); text-decoration: none;}',
+            '.promoPager a.active, .promoPager a.active:hover, .promoPager a:hover {' + opacity(99) + prefixer('transition-duration: 0.5s;)') + '}',
+            '.promoPager.thumb a {padding: 0; font: normal 32px/' + mainPadding + ' sans-serif; top: -4px;}',
+            '.promoPager a img {width: auto; height: 32px; margin-top: 8px;}',
+            '.promoPager.numeric a {font: normal 17px/' + mainPadding + ' sans-serif; position: relative; padding-top: 0; padding-bottom: 0;}',
+            '.promoContent.stretch .promoLink, .promoContent.stretch .promoImage, .promoContent.stretch .slideContentInner {width: 100% !important; height: 100% !important;}'
         ].join('');
 
-        if (o.captionPosition === 'top') {
-            styles += '.promoCaption {top: 0; bottom: auto;}';
-        }
-
-        if (!supportsTransitions) {
-            styles += '#promoContainer {' + opacity(100) + '}';
-        }
-
-        if (!document.addEventListener) {
-            styles += [
-                '.slideContentInner {width: 100%; height: 100%; position: absolute; left: 0;}',
-                '.#promoContainer {' + opacity(100) + '}',
-                '.promoSlide * {' + opacity(100) + '}',
-                '.promoLink {display: block;}'
-            ].join('');
-        }
-
-        if (!o.noActionButtons) {
-            styles += [
-                '#actionButtons {width: 100%; position: absolute; top: 100%; padding: 8px 0 0; text-align: center; z-index: 9997;}',
-                '#actionButtons a {display: inline-block; text-decoration: underline; padding: 4px 8px; margin: 0 5px;}'
-            ].join('');
-        }
-
-        if (o.fitContent === 'stretch') {
-            styles += '.promoLink, .promoImage, .slideContentInner {width: 100% !important; height: 100% !important;}';
-        }
-
-        if (o.interstitialDuration) {
-            styles += [
-                '#promoContainer * {color: #000;}',
-                '#promoOverlay {background: #fff;' + opacity(99) + '}',
-                '#interstitialText {z-index: 9996; position: fixed; top: 0; left: 0; width: 100%; pointer-events: all;}',
-                '#interstitialSkipText {text-decoration: underline;}'
-            ].join('');
-        }
+        styles += [
+            '.promoContainer.interstitial * {color: #000;}',
+            '.promoOverlay {background: #fff;' + opacity(99) + '}',
+            '.interstitialText {z-index: 9996; position: fixed; top: 0; left: 0; width: 100%; pointer-events: all;}',
+            '.interstitialSkipText {text-decoration: underline;}',
+            '.promoCaption {color: #fff;}'
+        ].join('.promoContainer.interstitial ');
 
         styles += [
-            '#promoContent.fullscreen {width: 100%;}',
-            '.fullscreen #promoSlidesWrap, #promoContent.fullscreen {top: 0; left: 0; right: 0;}',
-            '.fullscreen, #promoContent.fullscreen #promoSlidesWrap {margin: 0; padding: 0; height: 100%; max-width: 100%; max-height: 100%;}',
-            '.fullscreen .promoImage, #promoContent.fullscreen .promoLink {display: block; height: 100%; width: auto; max-width: initial;}',
-            '.fullscreen .promoLink {display: block; width: 100%;}',
-            '.fullscreen .slideContentInner {width: auto; height: 100%;}',
-            '.fullscreen #actionButtons {margin: 0; position: absolute; bottom: ' + mainPadding + '; top: auto;}',
-            '.fullscreen #promoPrev, #promoContent.fullscreen #promoNext {width: 120px;}',
-            '.fullscreen #promoPrev {left: 0;}',
-            '.fullscreen #promoNext {right: 0;}',
-            '.fullscreen #promoClose {right: ' + mainPadding + '; top: 3%;}',
-            '.fullscreen #promoCounter {left: ' + mainPadding + '; top: 3%;}',
-            '.fullscreen #promoPager {top: 3%;}'
-        ].join('#promoContent');
+            '.promoContent.fullscreen {width: 100%;}',
+            ' .promoSlidesWrap, .promoContent.fullscreen {top: 0; left: 0; right: 0;}',
+            ', .promoContent.fullscreen .promoSlidesWrap {margin: 0; padding: 0; height: 100%; max-width: 100% !important; max-height: 100% !important;}',
+            ' .promoImage, .promoContent.fullscreen .promoLink {height: 100%; width: auto; max-width: none;}',
+            ' .slideContentInner {height: 100%;}',
+            ' .actionButtons {margin: 0; position: absolute; bottom: ' + mainPadding + '; top: auto;}',
+            ' .promoPrev, .promoContent.fullscreen .promoNext {width: 120px;}',
+            ' .promoPrev {left: 0;}',
+            ' .promoNext {right: 0;}',
+            ' .promoClose {right: ' + mainPadding + '; top: 3%; bottom: auto;}',
+            ' .promoCounter {left: ' + mainPadding + '; top: 3%; bottom: auto;}',
+            ' .promoPager {top: 3%; bottom: auto;}'
+        ].join('.promoContent.fullscreen');
 
-        if (o.closeButtonOnHover) {
-            styles += [
-                '#promoClose { ' + opacity(0) + ' }',
-                '#promoContent:hover #promoClose { ' + opacity(75) + ' }'
-            ].join('');
-        }
+        styles += [
+            '.promoContent.hover.counter .promoCounter { ' + opacity(0) + prefixer('transition: opacity 0.25s;') + ' }',
+            ':hover .promoCounter { ' + opacity(99) + ' }',
+            '.close .promoClose { ' + opacity(0) + ' }',
+            ':hover .promoClose { ' + opacity(75) + ' }',
+            '.arrows .promoNext { ' + opacity(0) + ' }',
+            '.arrows .promoPrev { ' + opacity(0) + ' }',
+            ':hover .promoNext { ' + opacity(50) + ' }',
+            ':hover .promoPrev { ' + opacity(50) + ' }',
+            '.pager .promoPager { ' + opacity(0) + prefixer('transition: opacity 0.25s;') + ' }',
+            ':hover .promoPager { ' + opacity(99) + ' }'
+        ].join('.promoContent.hover');
 
-        if (o.slider) {
-            styles += [
-                '#promoSlides {width: 400%; left: -100%;}',
-                '#promoNext, #promoPrev {position: absolute; top: 0; left: -' + mainPadding + '; width: ' + mainPadding + '; padding: 0; text-align: center; height: 100%; display: inline-block;' + opacity(50) + prefixer('transition: opacity 0.25s;') + 'z-index: 9997;}',
-                '#promoNext {left: auto; right: -' + mainPadding + ';}',
-                '#promoNext span, #promoPrev span {font: normal 64px/0 sans-serif; display: inline-block; position: absolute; left: 0; top: 48.7%; width: 100%;}',
-                '#promoContent:hover #promoNext:hover, #promoContent:hover #promoPrev:hover {' + opacity(99) + '}',
-                '.promoSlide {width: 100%; float: left;' + prefixer('transition: width ' + o.slideDuration + 's ' + o.easing + ';') + '}',
-                '.promoSlide:first-child {overflow: hidden; width: 1px; visibility: hidden; margin-left: -1px;}',
-                '.promoSlide:first-child + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {width: 25%;' + opacity(99) + '}',
-                '#promoPager {position: absolute; top: -' + mainPadding + '; left: 20%; width: 60%; text-align: center; z-index: 9997;}',
-                '#promoPager a {display: inline-block; position: relative; padding: 0 6px; margin: 0;' + opacity(50) + 'font: normal 36px/' + mainPadding + ' sans-serif;' + prefixer('transition: opacity ' + o.slideDuration + 's ease-out;') + '-webkit-transform: translateZ(0);}',
-                '#promoPager a.active, #promoPager a.active:hover, #promoPager a:hover {' + opacity(99) + prefixer('transition-duration: 0.5s;)') + '}',
-                '#promoPager.thumbs a {padding: 0; font: normal 32px/' + mainPadding + ' sans-serif; top: -4px;}',
-                '#promoPager a img {width: auto; height: 32px;}',
-                '.seekAnim .promoSlide {' + prefixer('transform-origin: center;') + prefixer('transition-timing-function: linear;') + prefixer('transition-duration: ' + o.seekAnimSpeed + 's;') + '}'
-            ].join('');
+        styles += [
+            '.promoContent.vertical .promoSlides {width: 100%; left: 0; height: 400%; top: 0;}',
+            '.promoSlide {top: -25%; width: 100%; float: none; height: auto;' + prefixer('transition-property: height;') + prefixer('transform-origin: center;') + '}',
+            '.promoSlide:first-child {width: 100%; height: 0;}',
+            '.slideContent {width: 100%; display: inline-block; position: relative;}',
+            '.promoLink {width: 100%;}',
+            '.promoSlide:first-child + .promoSlide, .promoContent.vertical .promoSlide:first-child + .promoSlide + .promoSlide, .promoContent.vertical .promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {width: 100%; left: 0; height: 25%;}'
+        ].join('.promoContent.vertical ');
 
-            if (o.vertical) {
-                styles += [
-                    '#promoSlides {width: 100%; left: 0; height: 400%; top: 0;}',
-                    '.promoSlide {top: -25%; width: 100%; float: none; height: auto;' + prefixer('transition-property: height;') + prefixer('transform-origin: center;') + '}',
-                    '.promoSlide:first-child {width: 100%; height: 0;}',
-                    '.slideContent {width: 100%; display: inline-block; position: relative;}',
-                    '.promoLink {width: 100%;}',
-                    '.promoSlide:first-child + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide, .promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {width: 100%; left: 0; height: 25%;}'
-                ].join('');
-            }
-
-            if (o.effect !== 'fade') {
-                styles += '.promoSlide:first-child + .promoSlide + .promoSlide {' + prefixer('transition: none;') + '}';
-            }
-
-            if (o.pager === 'numeric') {
-                styles += '#promoPager a {font: normal 17px/' + mainPadding + ' sans-serif; position: relative; padding-top: 0; padding-bottom: 0;}';
-            }
-
-            if (o.navArrowsPosition === 'inside') {
-                styles += [
-                    '#promoNext {right: 0;}',
-                    '#promoPrev {left: 0;}'
-                ].join('');
-            }
-
-            if (o.effect === 'fade') {
-                styles += [
-                    '#promoSlides {left: 0;}',
-                    '.promoSlide {z-index: 94;' + opacity(0) + prefixer('transition-property: opacity;') + '}',
-                    '.promoSlide:first-child {left: 25%;' + prefixer('transition: none;') + '}',
-                    '.promoSlide:first-child + .promoSlide {' + opacity(0) + '}',
-                    '.promoSlide:first-child + .promoSlide + .promoSlide {z-index: 97; left: -25%;' + opacity(99) + '}',
-                    '.promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {left: -50%;' + opacity(0) + '}'
-                ].join('');
-            }
-
-            if (o.navArrowsOnHover) {
-                styles += [
-                    '#promoNext, #promoPrev { ' + opacity(0) + ' }',
-                    '#promoContent:hover #promoNext, #promoContent:hover #promoPrev { ' + opacity(50) + ' }'
-                ].join('');
-            }
-
-            if (o.pagerOnHover) {
-                styles += [
-                    '#promoPager { ' + opacity(0) + prefixer('transition: opacity 0.25s;') + ' }',
-                    '#promoContent:hover #promoPager { ' + opacity(99) + ' }'
-                ].join('');
-            }
-        }
-
-        if (o.pagerPosition === 'bottom') {
-            styles += '#promoPager {top: auto; bottom: -' + mainPadding + ';}';
-
-            if (!o.noActionButtons && o.actionButtons) {
-                styles += '#actionButtons {margin-top: ' + mainPadding + ';}';
-            }
-        }
+        styles += [
+            '.promoContent.fade .promoSlides {left: 0;}',
+            '.promoSlide {z-index: 94;' + opacity(0) + prefixer('transition: opacity ' + o.slideDuration + 's ' + o.easing + ' !important;') + '}',
+            '.promoSlide:first-child {left: 25%;' + prefixer('transition: none;') + '}',
+            '.promoSlide:first-child + .promoSlide {' + opacity(0) + '}',
+            '.promoSlide:first-child + .promoSlide + .promoSlide {z-index: 97; left: -25%;' + opacity(99) + '}',
+            '.promoSlide:first-child + .promoSlide + .promoSlide + .promoSlide {left: -50%;' + opacity(0) + '}'
+        ].join('.promoContent.fade ');
 
         if (o.fadeInDuration > 0) {
             styles += [
                 prefixer('keyframes promoFadeIn {from {opacity: 0} to {opacity: 1}}', '@'),
-                '#promoContainer {' + prefixer('animation: promoFadeIn ' + o.fadeInDuration + 's ease-in 0.2s 1 forwards;') + '}'
+                '.promoContainer {' + prefixer('animation: promoFadeIn ' + o.fadeInDuration + 's ease-in 0.2s 1 forwards;') + '}'
             ].join('');
         } else {
-            styles += '#promoContainer {' + opacity(99) + ' }';
+            styles += '.promoContainer {' + opacity(99) + ' }';
         }
 
         if (o.fadeOutDuration > 0) {
             styles += [
                 prefixer('keyframes promoFadeOut {from {opacity: 1} to {opacity: 0}}', '@'),
-                '#promoContainer.fadeOut {' + prefixer('animation: promoFadeOut ' + o.fadeOutDuration + 's ease-out;') + '}'
+                '.promoContainer.fadeOut {' + prefixer('animation: promoFadeOut ' + o.fadeOutDuration + 's ease-out;') + '}'
             ].join('');
         }
 
-        if (!o.showScrollbar) {
-            styles += 'html {overflow: hidden !important;}';
-            if (window.innerHeight < body.scrollHeight) {
-                styles += 'body {width: ' + body.offsetWidth + 'px;}';
-            }
+        if (!supportsTransitions) {
+            styles += '.promoContainer {' + opacity(100) + '}';
+        }
+
+        if (!document.addEventListener) {
+            styles += [
+                '.slideContentInner {width: 100%; height: 100%; position: absolute; left: 0;}',
+                '.promoContainer {' + opacity(100) + '}',
+                '.promoSlide * {' + opacity(100) + '}',
+                '.promoLink {display: block;}'
+            ].join('');
         }
 
         s.styles = makeElement('style', {id: 'promoStyle', type: 'text/css'});
@@ -493,12 +455,15 @@ function PromoSlider(o) {
         o.autoPlay = o.autoPlay || null;
         o.autoPlayDirection = o.autoPlayDirection || null;
         o.customClass = o.customClass || 'promoSlider';
-        o.close = o.close || 'top-right';
+        o.close = o.close !== false;
         o.closeButtonOnHover = o.closeButtonOnHover || null;
         o.closeButtonText = o.closeButtonText || '×';
-        o.captionPosition = o.captionPosition || '×';
+        o.closeButtonPosition = o.closeButtonPosition || 'top';
+        o.captionPosition = o.captionPosition || 'bottom';
         o.fullscreen = o.fullscreen || null;
         o.counter = o.counter || null;
+        o.counterPosition = o.counterPosition || 'outside';
+        o.counterOnHover = o.counterOnHover || null;
         o.deleteCookieOnUrl = o.deleteCookieOnUrl || null;
         o.easing = o.easing || 'ease-in-out';
         o.effect = o.effect || null;
@@ -517,24 +482,22 @@ function PromoSlider(o) {
         o.loadDelay = o.loadDelay || null;
         o.maxSlides = o.maxSlides || null;
         o.navArrowsOnHover = o.navArrowsOnHover || null;
-        o.navArrowsPosition = o.navArrowsPosition || null;
-        o.noActionButtons = o.noActionButtons || null;
+        o.navArrowsPosition = o.navArrowsPosition || 'outside';
         o.noCloseOnClick = o.noCloseOnClick || false;
-        o.infinite = o.infinite || true;
+        o.infinite = o.infinite !== false;
         o.noKeyClose = o.noKeyClose || null;
         o.disableNavArrows = o.disableNavArrows || null;
-        o.overlay = o.overlay || true;
-        o.modal = o.modal || true;
-        o.pager = o.pager || true;
+        o.overlay = o.overlay !== false;
+        o.modal = o.modal !== false;
+        o.pager = o.pager || o.pager !== false;
         o.noPauseOnHover = o.noPauseOnHover || null;
-        o.noSlider = o.noSlider || null;
         o.disableKeyNav = o.disableKeyNav || null;
-        o.styles = o.styles || true;
         o.onPromoClick = o.onPromoClick || null;
         o.onPromoClose = o.onPromoClose || null;
         o.onPromoStart = o.onPromoStart || null;
         o.pagerOnHover = o.pagerOnHover || null;
-        o.pagerPosition = o.pagerPosition || null;
+        o.pagerPosition = o.pagerPosition || 'top';
+        o.actionButtonsPosition = o.actionButtonsPosition || 'bottom';
         o.randomize = o.randomize || false;
         o.reverseKeyNav = o.reverseKeyNav || false;
         o.rewindOnEnd = o.rewindOnEnd || null;
@@ -542,11 +505,10 @@ function PromoSlider(o) {
         o.running = null;
         o.showOnUrl = o.showOnUrl || null;
         o.showProbability = o.showProbability || 1;
-        o.showScrollbar = o.showScrollbar || false;
-        o.slideDuration = o.slideDuration || 1;
+        o.slideDuration = o.slideDuration >= 0 ? o.slideDuration : 1;
         o.slides = o.slides || null;
         o.startDate = o.startDate || null;
-        o.frequencyID = o.frequencyID || 'promoSlider';
+        o.promoID = o.promoID || 'promoSlider';
         o.vertical = o.vertical || null;
         o.waitAnimationFinish = o.waitAnimationFinish || null;
         o.width = o.width || null;
@@ -591,7 +553,7 @@ function PromoSlider(o) {
             }
 
             if (deleteCookie) {
-                cookie.eraseCookie(o.frequencyID);
+                cookie.eraseCookie(o.promoID);
             }
 
             if (showOnUrl) {
@@ -603,11 +565,11 @@ function PromoSlider(o) {
             }
 
             if (o.frequency) {
-                if (cookie.readCookie(o.frequencyID)) {
+                if (cookie.readCookie(o.promoID)) {
                     return false;
                 }
                 if (!deleteCookie) {
-                    cookie.createCookie(o.frequencyID, '1', o.frequency);
+                    cookie.createCookie(o.promoID, '1', o.frequency);
                 }
             }
         }
@@ -632,12 +594,12 @@ function PromoSlider(o) {
             o.slides = shuffleArray(o.slides);
         }
 
-        if (!o.noSlider && o.slides.length > 1) {
+        if (o.slides.length > 1) {
             s.initSlider();
         }
 
         if (deleteCookie) {
-            cookie.eraseCookie(o.frequencyID);
+            cookie.eraseCookie(o.promoID);
         }
 
         if (o.interstitialDuration) {
@@ -656,7 +618,6 @@ function PromoSlider(o) {
             }
 
             o.appendTo = document.getElementById(o.appendTo);
-            o.showScrollbar = true;
             o.autoCloseSeconds = null;
             o.interstitialDuration = null;
             o.fullscreen = null;
@@ -724,13 +685,13 @@ function PromoSlider(o) {
         var slideContent, slideContentInner, promoSlide, promoImage, promoLink, promoCaption, psImg, psLnk, psTgt, psCaption, pager, pagerContent, i;
 
         s.promo = {
-            overlay: makeElement('div', {id: 'promoOverlay'}),
-            container: makeElement('div', {id: 'promoContainer'}),
-            content: makeElement('div', {id: 'promoContent'}),
-            slidesWrap: makeElement('div', {id: 'promoSlidesWrap'}),
-            slides: makeElement('ul', {id: 'promoSlides'}),
-            close: makeElement('a', {id: 'promoClose', href: '#'}, o.closeButtonText),
-            buttons: makeElement('div', {id: 'actionButtons'})
+            overlay: makeElement('div', {'class': 'promoOverlay'}),
+            container: makeElement('div', {'class': 'promoContainer'}),
+            content: makeElement('div', {'class': 'promoContent'}),
+            slidesWrap: makeElement('div', {'class': 'promoSlidesWrap'}),
+            slides: makeElement('ul', {'class': 'promoSlides'}),
+            close: makeElement('a', {'class': 'promoClose', href: '#'}, o.closeButtonText),
+            actionButtons: makeElement('div', {'class': 'actionButtons'})
         };
 
         if (o.interstitialDuration) {
@@ -739,16 +700,13 @@ function PromoSlider(o) {
 
             o.interstitialText = o.interstitialText.replace('%s', s.promo.interstitialDurationCounter);
 
-            s.promo.interstitialText = makeElement('p', {id: 'interstitialText'}, '&nbsp;' + o.interstitialText);
-            s.promo.interstitialSkipText = makeElement('a', {
-                id: 'interstitialSkipText',
-                href: '#'
-            }, o.interstitialSkipText);
+            s.promo.interstitialText = makeElement('p', {'class': 'interstitialText'}, '&nbsp;' + o.interstitialText);
+            s.promo.interstitialSkipText = makeElement('a', {'class': 'interstitialSkipText', href: '#'}, o.interstitialSkipText);
 
             s.promo.interstitialText.insertBefore(s.promo.interstitialSkipText, s.promo.interstitialText.firstChild);
             s.promo.container.appendChild(s.promo.interstitialText);
 
-            addClass('#promoContainer', 'interstitial');
+            addClass(s.promo.container, 'interstitial');
         }
 
         for (i = 0; i < o.slides.length; i = i + 1) {
@@ -774,6 +732,9 @@ function PromoSlider(o) {
                 }
 
                 if (psCaption) {
+                    if (o.captionPosition === 'top') {
+                        addClass(promoCaption, 'top');
+                    }
                     slideContentInner.appendChild(promoCaption);
                 }
 
@@ -812,7 +773,7 @@ function PromoSlider(o) {
                     return result;
                 };
 
-                s.promo.pager = makeElement('div', {id: 'promoPager'});
+                s.promo.pager = makeElement('div', {'class': 'promoPager'});
 
                 for (i = 0; i < o.slideNum; i = i + 1) {
                     pager = makeElement('a', {href: '#'});
@@ -825,14 +786,8 @@ function PromoSlider(o) {
 
             if (!o.disableNavArrows) {
 
-                s.promo.nextButton = makeElement('a', {
-                    id: 'promoNext',
-                    href: '#'
-                }, '<span>›</span>');
-                s.promo.prevButton = makeElement('a', {
-                    id: 'promoPrev',
-                    href: '#'
-                }, '<span>‹</span>');
+                s.promo.nextButton = makeElement('a', {'class': 'promoNext', href: '#'}, '<span>›</span>');
+                s.promo.prevButton = makeElement('a', {'class': 'promoPrev', href: '#'}, '<span>‹</span>');
 
                 s.promo.content.appendChild(s.promo.nextButton);
                 s.promo.content.appendChild(s.promo.prevButton);
@@ -845,13 +800,13 @@ function PromoSlider(o) {
                 o.counter = o.counter.replace('%current', '<span class="current"></span>');
                 o.counter = o.counter.replace('%total', '<span class="total"></span>');
 
-                s.promo.psCounter = makeElement('p', {id: 'promoCounter'}, o.counter);
+                s.promo.counter = makeElement('p', {'class': 'promoCounter'}, o.counter);
 
-                s.promo.content.appendChild(s.promo.psCounter);
+                s.promo.content.appendChild(s.promo.counter);
             }
         }
 
-        if (o.overlay && !document.getElementById('promoOverlay')) {
+        if (o.overlay && !document.querySelector('.promoOverlay')) {
             s.promo.container.appendChild(s.promo.overlay);
         }
 
@@ -859,10 +814,10 @@ function PromoSlider(o) {
             s.promo.content.appendChild(s.promo.close);
         }
 
-        if (!o.noActionButtons && o.actionButtons && o.actionButtons.length) {
+        if (o.actionButtons && o.actionButtons.length) {
 
             for (i = 0; i < o.actionButtons.length; i = i + 1) {
-                s.promo.buttons.appendChild(
+                s.promo.actionButtons.appendChild(
                     makeElement('a',
                         {
                             'href': o.actionButtons[i][1] || '#close',
@@ -873,36 +828,104 @@ function PromoSlider(o) {
                 );
             }
 
-            s.promo.content.appendChild(s.promo.buttons);
+            s.promo.content.appendChild(s.promo.actionButtons);
         }
 
         s.promo.container.appendChild(s.promo.content);
 
         if (o.state === 'embed') {
-            body.appendChild(s.promo.overlay);
             o.appendTo.appendChild(s.promo.content);
-            addClass('#promoContent', 'embed');
-            addClass('#promoOverlay', 'promoHidden');
+            addClass(s.promo.content, 'embed');
         } else {
             body.appendChild(s.promo.container);
         }
 
-        addClass('#promoContainer', o.customClass);
-        addClass('#promoContent', o.customClass);
+        addClass(s.promo.container, o.customClass);
+        addClass(s.promo.content, o.customClass);
 
         if (o.state === 'fullscreen') {
-            addClass('#promoContent', 'fullscreen');
+            addClass(s.promo.content, 'fullscreen');
+        }
+
+        if (o.vertical) {
+            addClass(s.promo.content, 'vertical');
+        }
+
+        if (o.effect === 'fade') {
+            addClass(s.promo.content, 'fade');
+        }
+
+        if (o.navArrowsPosition === 'inside') {
+            addClass(s.promo.nextButton, 'inside');
+            addClass(s.promo.prevButton, 'inside');
+        }
+
+        if (o.closeButtonPosition === 'inside') {
+            addClass(s.promo.close, 'inside');
+        }
+
+        if (o.counterPosition === 'inside') {
+            addClass(s.promo.counter, 'inside');
+        }
+
+        if (o.pager === 'numeric') {
+            addClass(s.promo.pager, 'numeric');
+        } else if (o.pager === 'thumb') {
+            addClass(s.promo.pager, 'thumb');
+        }
+
+        if (o.pagerPosition === 'inside') {
+            addClass(s.promo.pager, 'inside');
+        }
+
+        if (o.pagerPosition === 'bottom') {
+            addClass(s.promo.pager, 'bottom');
+        }
+
+        if (o.actionButtonsPosition === 'top') {
+            addClass(s.promo.actionButtons, 'top');
+        }
+
+        if (o.closeButtonOnHover) {
+            addClass(s.promo.content, 'hover');
+            addClass(s.promo.content, 'close');
+        }
+
+        if (o.counterOnHover) {
+            addClass(s.promo.content, 'hover');
+            addClass(s.promo.content, 'counter');
+        }
+
+        if (o.navArrowsOnHover) {
+            addClass(s.promo.content, 'hover');
+            addClass(s.promo.content, 'arrows');
+        }
+
+        if (o.pagerOnHover) {
+            addClass(s.promo.content, 'hover');
+            addClass(s.promo.content, 'pager');
+        }
+
+        if (o.fitContent === 'stretch') {
+            addClass(s.promo.content, 'stretch');
         }
 
         if (o.slider) {
+
+            for (i = 0; i < o.slides.length; i = i + 1) {
+                s.promo.slides.childNodes[i].style.transitionDuration = o.slideDuration + 's';
+                s.promo.slides.childNodes[i].style.transitionTimingFunction = o.easing;
+            }
             s.events.onSlide();
+
+        } else {
+            addClass(s.promo.container, 'single');
         }
 
-        if (o.pager === 'thumb') {
-            addClass('#promoPager', 'thumbs', true);
-        }
+        s.promo.content.style.maxWidth = o.width;
+        s.promo.content.style.maxHeight = o.height;
 
-        s.repaintStyle(document.querySelectorAll('.slideContentInner')[0]);
+        s.repaintStyle(s.promo.slides.childNodes[0].querySelector('.slideContentInner'));
     };
 
     s.appendSlide = function (prepend) {
@@ -977,7 +1000,7 @@ function PromoSlider(o) {
     s.addListeners = function () {
 
         var i, counter, skipLink,
-            actionButtons = document.getElementById('actionButtons'),
+            actionButtons = s.promo.actionButtons,
             openLink = function (e) {
                 return s.events.clickHandler(e, this);
             },
@@ -996,7 +1019,7 @@ function PromoSlider(o) {
             addEvent(s.promo.overlay, 'click', s.events.close);
         }
 
-        if (!o.noActionButtons && actionButtons && actionButtons.childNodes) {
+        if (actionButtons && actionButtons.childNodes) {
             for (i = 0; i < actionButtons.childNodes.length; i = i + 1) {
                 addEvent(actionButtons.childNodes[i], 'click', openLink);
             }
@@ -1083,8 +1106,8 @@ function PromoSlider(o) {
 
     s.setCounterValue = function () {
 
-        var current = document.querySelector('#promoCounter .current'),
-            total = document.querySelector('#promoCounter .total');
+        var current = s.promo.counter.querySelector('.current'),
+            total = s.promo.counter.querySelector('.total');
 
         if (current) {
             current.innerHTML = 1 + o.current;
@@ -1119,15 +1142,18 @@ function PromoSlider(o) {
 
         var tmp;
 
-        if (!obj) {
-            return false;
+        if (isWebkit) {
+            if (!obj) {
+                return false;
+            }
+
+            obj.style.display = 'none';
+            tmp = obj.offsetHeight;
+            obj.removeAttribute('style');
+
+            return tmp;
         }
 
-        obj.style.display = 'none';
-        tmp = obj.offsetHeight;
-        obj.removeAttribute('style');
-
-        tmp = tmp + 1;
     };
 
     s.events = {
@@ -1156,9 +1182,9 @@ function PromoSlider(o) {
 
         onSlide: function (e, index) {
 
-            var activeSlide,
-                slides = document.querySelectorAll('.promoSlide'),
-                slideContentInner = document.querySelectorAll('.slideContentInner')[2];
+            if (!o.slider) {
+                return false;
+            }
 
             e = e || window.event;
 
@@ -1168,34 +1194,32 @@ function PromoSlider(o) {
 
             if (s.promo && s.promo.pager) {
 
-                activeSlide = document.querySelector('#promoPager a.active');
-
-                if (activeSlide) {
-                    activeSlide.className = '';
+                if (s.promo.pager.querySelector('a.active')) {
+                    s.promo.pager.querySelector('a.active').className = '';
                 }
 
-                document.querySelectorAll('#promoPager a')[index].className = 'active';
+                s.promo.pager.querySelectorAll('a')[index].className = 'active';
             }
 
-            slides[1].className = 'promoSlide';
-            slides[2].className = 'promoSlide current';
-            slides[3].className = 'promoSlide';
+            s.promo.slides.childNodes[1].className = 'promoSlide';
+            s.promo.slides.childNodes[2].className = 'promoSlide current';
+            s.promo.slides.childNodes[3].className = 'promoSlide';
 
-            s.repaintStyle(slideContentInner);
+            s.repaintStyle(s.promo.slides.childNodes[2].querySelector('.slideContentInner'));
 
             if (!o.disableNavArrows) {
 
-                addClass('#promoPrev', '', true);
-                addClass('#promoNext', '', true);
+                removeClass(s.promo.prevButton, ' promoHidden', true);
+                removeClass(s.promo.nextButton, ' promoHidden', true);
 
                 if (!o.infinite) {
 
                     if (o.prev === o.slideNum - 1) {
-                        addClass('#promoPrev', 'promoHidden', true);
+                        addClass(s.promo.prevButton, 'promoHidden');
                     }
 
                     if (o.next === 0) {
-                        addClass('#promoNext', 'promoHidden', true);
+                        addClass(s.promo.nextButton, 'promoHidden');
                     }
                 }
             }
@@ -1209,7 +1233,7 @@ function PromoSlider(o) {
 
             preventDefault(e);
 
-            if (o.noSlider) {
+            if (!o.slider) {
                 return false;
             }
 
@@ -1257,11 +1281,11 @@ function PromoSlider(o) {
 
         gotoSlide: function (e, index) {
 
-            var offset, gotoSlideID, prev;
+            var offset, gotoSlideID, prev, i;
 
             preventDefault(e);
 
-            if (o.noSlider) {
+            if (!o.slider) {
                 return false;
             }
 
@@ -1294,7 +1318,10 @@ function PromoSlider(o) {
 
             o.running = o.waitAnimationFinish;
 
-            addClass('#promoSlidesWrap', 'seekAnim', true);
+            for (i = 0; i < o.slides.length; i = i + 1) {
+                s.promo.slides.childNodes[i].style.transitionDuration = o.seekAnimSpeed + 's';
+                s.promo.slides.childNodes[i].style.transitionTimingFunction = 'linear';
+            }
 
             s.appendSlide(prev);
 
@@ -1302,7 +1329,12 @@ function PromoSlider(o) {
 
                 if (offset === 0) {
                     o.running = false;
-                    addClass('#promoSlidesWrap', '', true);
+
+                    for (i = 0; i < o.slides.length; i = i + 1) {
+                        s.promo.slides.childNodes[i].style.transitionDuration = o.slideDuration + 's';
+                        s.promo.slides.childNodes[i].style.transitionTimingFunction = o.easing;
+                    }
+
                     s.events.stopTimer(gotoSlideID, true);
 
                 } else {
@@ -1342,13 +1374,13 @@ function PromoSlider(o) {
                 return false;
             }
 
-            callCallBack(o.onPromoClose, e, null, o.current);
+            callCallBack(o.onPromoClose, e, null, o.current, o.state);
 
             if (s.promo.container) {
 
                 if (o.fadeOutDuration > 0) {
 
-                    addClass('#promoContainer', 'fadeOut');
+                    addClass(s.promo.container, 'fadeOut');
 
                     setTimeout(function () {
                         if (s) {
@@ -1361,9 +1393,11 @@ function PromoSlider(o) {
                 }
             }
 
-            s.events.stopTimer(autoCloseID);
-            s.events.stopTimer(interstitialCloseID);
-            s.events.stopTimer(autoPlayID, true);
+            if (s && s.events) {
+                s.events.stopTimer(autoCloseID);
+                s.events.stopTimer(interstitialCloseID);
+                s.events.stopTimer(autoPlayID, true);
+            }
         },
 
         stopTimer: function (id, interval) {
@@ -1432,12 +1466,13 @@ function PromoSlider(o) {
             }
 
             if (o.state === 'fullscreen') {
-                addClass('#promoContent', o.customClass, true);
+                removeClass(s.promo.content, ' fullscreen');
+
                 o.state = 'lightbox';
 
             } else {
 
-                addClass('#promoContent', 'fullscreen ' + o.customClass, true);
+                addClass(s.promo.content, 'fullscreen');
 
                 if (o.close) {
                     s.promo.content.appendChild(s.promo.close);
@@ -1447,7 +1482,8 @@ function PromoSlider(o) {
                 o.state = 'fullscreen';
             }
 
-            s.repaintStyle(document.querySelectorAll('.slideContentInner')[2]);
+            s.repaintStyle(s.promo.slides.childNodes[0].querySelector('.slideContentInner'));
+            s.repaintStyle(s.promo.slides.childNodes[2].querySelector('.slideContentInner'));
 
             return false;
         },
@@ -1458,12 +1494,16 @@ function PromoSlider(o) {
 
                 if (o.state !== 'embed') {
 
-                    addClass('#promoContainer', 'fadeOut');
+                    addClass(s.promo.container, 'fadeOut');
 
                     setTimeout(function () {
 
-                        addClass('#promoOverlay', 'promoHidden', true);
-                        addClass('#promoContent', 'embed ' + o.customClass, true);
+                        s.promo.overlay.parentNode.removeChild(s.promo.overlay);
+                        s.promo.container.parentNode.removeChild(s.promo.container);
+
+                        removeClass(s.promo.container, ' fadeOut');
+                        removeClass(s.promo.content, ' fullscreen');
+                        addClass(s.promo.content, 'embed');
 
                         o.appendTo.appendChild(s.promo.content);
 
@@ -1471,11 +1511,10 @@ function PromoSlider(o) {
                             s.promo.close.parentNode.removeChild(s.promo.close);
                         }
 
-                        addClass('#promoContainer', '', true);
                         o.state = 'embed';
 
-                        s.repaintStyle(document.querySelectorAll('.slideContentInner')[0]);
-                        s.repaintStyle(document.querySelectorAll('.slideContentInner')[2]);
+                        s.repaintStyle(s.promo.slides.childNodes[0].querySelector('.slideContentInner'));
+                        s.repaintStyle(s.promo.slides.childNodes[2].querySelector('.slideContentInner'));
 
                     }, o.fadeOutDuration * 1000);
 
@@ -1484,8 +1523,8 @@ function PromoSlider(o) {
                     body.appendChild(s.promo.container);
                     s.promo.container.appendChild(s.promo.content);
 
-                    addClass('#promoOverlay', '', true);
-                    addClass('#promoContent', o.customClass, true);
+                    s.promo.container.appendChild(s.promo.overlay);
+                    removeClass(s.promo.content, ' embed');
 
                     if (o.close) {
                         s.promo.content.appendChild(s.promo.close);
@@ -1494,8 +1533,8 @@ function PromoSlider(o) {
 
                     o.state = 'lightbox';
 
-                    s.repaintStyle(document.querySelectorAll('.slideContentInner')[0]);
-                    s.repaintStyle(document.querySelectorAll('.slideContentInner')[2]);
+                    s.repaintStyle(s.promo.slides.childNodes[0].querySelector('.slideContentInner'));
+                    s.repaintStyle(s.promo.slides.childNodes[2].querySelector('.slideContentInner'));
                 }
             }
         },
@@ -1510,7 +1549,7 @@ function PromoSlider(o) {
                 preventDefault(e);
             }
 
-            callCallBack(o.onPromoClick, e, obj, o.current);
+            callCallBack(o.onPromoClick, e, obj, o.current, o.state);
 
             step = link.indexOf('#slide');
 
@@ -1520,33 +1559,39 @@ function PromoSlider(o) {
 
             if (link.indexOf('#first') !== -1) {
                 targetSlide = 0;
+
             } else if (link.indexOf('#last') !== -1) {
                 targetSlide = o.slideNum - 1;
+
             } else if (link.indexOf('#prev') !== -1) {
                 targetSlide = o.current - 1;
+
             } else if (link.indexOf('#next') !== -1) {
                 targetSlide = o.current + 1;
-            } else if (link.indexOf('#fullscreen') !== -1) {
+
+            }
+
+            if (targetSlide !== undefined) {
+                s.events.gotoSlide(e, targetSlide);
+                return false;
+            }
+
+            if (link.indexOf('#fullscreen') !== -1) {
 
                 if (o.state === 'embed') {
                     s.events.toggleEmbed();
-                } else {
-                    s.events.toggleFullscreen();
                 }
+                s.events.toggleFullscreen();
                 return false;
 
-            } else if (link.indexOf('#lightbox') !== -1) {
+            }
 
+            if (link.indexOf('#lightbox') !== -1) {
                 if (o.appendTo) {
                     s.events.toggleEmbed();
                 } else {
                     s.events.close(e);
                 }
-                return false;
-            }
-
-            if (targetSlide !== undefined) {
-                s.events.gotoSlide(e, targetSlide);
                 return false;
             }
 
@@ -1569,7 +1614,7 @@ function PromoSlider(o) {
             s.setDimensions(this.width, this.height);
 
             setTimeout(function () {
-                callCallBack(o.onPromoStart, null, null, o.current);
+                callCallBack(o.onPromoStart, null, null, o.current, o.state);
                 s.addStyles();
                 s.buildPromo();
                 s.addListeners();
@@ -1581,7 +1626,7 @@ function PromoSlider(o) {
 
         gotoSlide: function (index) {
 
-            if (index !== o.current + 1 && index < o.slideNum && index > 0) {
+            if (index !== o.current + 1) {
 
                 if (index === 'first') {
                     index = 0;
@@ -1593,6 +1638,10 @@ function PromoSlider(o) {
                     index = o.current - 1;
                 } else {
                     index = index - 1;
+                }
+
+                if (index >= o.slideNum || index < 0) {
+                    return false;
                 }
 
                 s.events.gotoSlide(null, index);
