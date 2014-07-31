@@ -22,15 +22,23 @@
 
         h1 {
             text-align: center;
-            margin: 48px 0;
-            color: #666;
-            font-size: 27px;
+            margin: 48px 0 16px;
+            color: #999;
+            font-size: 30px;
+        }
+
+        h1 + p {
+            text-align: center;
+            margin: 0 0 24px;
+            color: #999;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
         }
 
         section {
             text-align: center;
             padding: 54px 0 46px;
-            width: 480px;
+            width: 560px;
             margin: 0 auto;
         }
 
@@ -63,7 +71,7 @@
             color: #006597;
             display: block;
             text-decoration: none;
-            padding: 10px;
+            padding: 8px;
             background: #E9EAEB;
             outline: none !important;
         }
@@ -95,7 +103,6 @@
 
             height: 224px;
             transition: height 0.25s;
-            /*box-shadow: inset 0 0 2px rgba(0,0,0,0.1);*/
         }
 
         #sliderPlaceholder:empty {
@@ -135,37 +142,45 @@
 </head>
 <body>
 
-<h1>PromoSlider JavaScript Image Slider Demo</h1>
+<h1>PromoSlider Demo</h1>
+
+<p>
+    CSS3 powered JavaScript image slider
+</p>
 
 <section id="sliderPlaceholder"></section>
 
 <section class="demos">
 
     <ul class="group">
-        <li><a id="embed" class="active" href="#">Embed</a></li>
-        <li><a id="vertical" href="#">Vertical</a></li>
-        <li><a id="fade" href="#">Fade</a></li>
-        <li><a id="autoPlay" href="#">Auto play</a></li>
-        <li><a id="action" href="#">Action buttons</a></li>
-        <li><a id="fullscreen" href="#">Fullscreen</a></li>
-        <li><a id="interstitial" href="#">Interstitial</a></li>
-        <li><a id="randomize" href="#">Randomize</a></li>
-        <li><a id="randomOne" href="#">Random one</a></li>
-        <li><a id="customSize" href="#">Custom size</a></li>
-        <li><a id="modal" href="#">Modal</a></li>
-        <li><a id="thumb" href="#">Thumb pager</a></li>
-        <li><a id="numeric" href="#">Numeric pager</a></li>
-        <li><a id="counter" href="#">Counter</a></li>
-        <li><a id="customCounter" href="#">Custom counter</a></li>
-        <li><a id="finite" href="#">Finite</a></li>
-        <li><a id="hoverControls" href="#">Hover controls</a></li>
-        <li><a id="insideControls" href="#">Inside controls</a></li>
-        <li><a id="noAnimation" href="#">No animation</a></li>
-        <li><a id="linear" href="#">Linear animation</a></li>
-        <li><a id="topCaption" href="#">Top caption</a></li>
-        <li><a id="firstSlide" href="#">First slide 2</a></li>
-        <li><a id="activeSlide" href="#">Start at slide 4</a></li>
-        <li><a id="callback" href="#">Callbacks</a></li>
+        <li><a id="embed" class="active" href="#" title="Add embedded slider to page">Embed</a></li>
+        <li><a id="vertical" href="#" title="Set slide animation direction to vertical">Vertical</a></li>
+        <li><a id="fade" href="#" title="Set slide effect to fade">Fade</a></li>
+        <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a></li>
+        <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a></li>
+        <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a></li>
+        <li><a id="fullscreenStretch" href="#" title="Show fullscreen slider with images stretched to full width and height">Fullscreen stretch</a></li>
+        <li><a id="interstitial" href="#" title="Set slider style to interstitial">Interstitial</a></li>
+        <li><a id="customClose" href="#" title="Use custom close button text">Custom close</a></li>
+        <li><a id="randomize" href="#" title="Show slides in random order">Randomize</a></li>
+        <li><a id="randomOne" href="#" title="Pick one random slide from available slides">Random one</a></li>
+        <li><a id="customSize" href="#" title="Set custom slider size">Custom size</a></li>
+        <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a></li>
+        <li><a id="thumb" href="#" title="Show image thumbnails as pager items">Thumb pager</a></li>
+        <li><a id="numeric" href="#" title="Show slide numbers in pager instead of bullets">Numeric pager</a></li>
+        <li><a id="counter" href="#" title="Add slide counter">Counter</a></li>
+        <li><a id="customCounter" href="#" title="Use custom counter text template">Custom counter</a></li>
+        <li><a id="finite" href="#" title="Disable going to first slide after last slide">Finite</a></li>
+        <li><a id="rewind" href="#" title="Rewind slider after last slide">Rewind on end</a></li>
+        <li><a id="hoverControls" href="#" title="Show controls only on hovering the slider">Hover controls</a></li>
+        <li><a id="insideControls" href="#" title="Show controls inside slider boundaries">Inside controls</a></li>
+        <li><a id="noAnimation" href="#" title="Disable slide animation">No animation</a></li>
+        <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a></li>
+        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation end</a></li>
+        <li><a id="topCaption" href="#" title="Override default bottom caption position">Top caption</a></li>
+        <li><a id="firstSlide" href="#" title="Shift slides so that slide number two is the first">First slide 2</a></li>
+        <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Start at slide 4</a></li>
+        <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
     </ul>
 
     <p>
@@ -180,17 +195,15 @@ var Slider, embedSlider;
 
 function demoSlider() {
 
-    var embed = document.querySelector('.promoContent.embed'),
-            styles = document.querySelector('#promoStyle');
+    var embed = document.querySelector('.promoContent.embed');
 
     if (embed && arguments.length && arguments[0][0] === 'appendTo') {
         embed.parentNode.removeChild(embed);
-        styles.parentNode.removeChild(styles);
         return false;
     }
 
     var o = {
-        root: 'images/',
+        rootDir: 'https://github.com/rolandtoth/PromoSlider/images/',
         slides: [
             ['01.jpg', '#next', '', 'Slide 1: click for next slide'],
             ['02.jpg', '#last', '', 'Slide 2: click for last slide'],
@@ -248,9 +261,21 @@ document.getElementById('fullscreen').onclick = function () {
     return false;
 };
 
+// fullscreen stretch
+document.getElementById('fullscreenStretch').onclick = function () {
+    demoSlider(['fullscreen', true], ['fitContent', 'stretch']);
+    return false;
+};
+
 // interstitial
 document.getElementById('interstitial').onclick = function () {
-    demoSlider(['interstitialDuration', 30]);
+    demoSlider(['interstitialDuration', 30], ['keyClose', false]);
+    return false;
+};
+
+// custom close
+document.getElementById('customClose').onclick = function () {
+    demoSlider(['closeButtonText', 'Click here to close']);
     return false;
 };
 
@@ -280,7 +305,7 @@ document.getElementById('modal').onclick = function () {
 
 // auto play
 document.getElementById('autoPlay').onclick = function () {
-    demoSlider(['autoPlay', 3]);
+    demoSlider(['autoPlay', 1]);
     return false;
 };
 
@@ -308,9 +333,15 @@ document.getElementById('customCounter').onclick = function () {
     return false;
 };
 
-// finite pager
+// finite
 document.getElementById('finite').onclick = function () {
     demoSlider(['infinite', false]);
+    return false;
+};
+
+// rewind
+document.getElementById('rewind').onclick = function () {
+    demoSlider(['rewindOnEnd', true]);
     return false;
 };
 
@@ -353,6 +384,12 @@ document.getElementById('linear').onclick = function () {
     return false;
 };
 
+// wait animation finish
+document.getElementById('waitAnimation').onclick = function () {
+    demoSlider(['waitAnimationFinish', true]);
+    return false;
+};
+
 // top caption
 document.getElementById('topCaption').onclick = function () {
     demoSlider(['captionPosition', 'top']);
@@ -376,9 +413,9 @@ document.getElementById('callback').onclick = function () {
 
     demoSlider(
             ['onPromoStart', function () {
-                alert('Slider is starting...');
+                alert('PromoSlider is starting...');
             }],
-            
+
             ['onPromoClick', function (e, obj, slide, state) {
 
                 var target = e.target || e.srcElement;
@@ -394,7 +431,7 @@ document.getElementById('callback').onclick = function () {
             }],
 
             ['onPromoClose', function () {
-                alert('Slider is closing...');
+                alert('PromoSlider is closing...');
             }]
     );
     return false;

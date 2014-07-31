@@ -449,22 +449,23 @@ function PromoSlider(o) {
             currentDateEpoch = Math.round(new Date().getTime() / 1000);
 
         o.actionButtons = o.actionButtons || null;
+        o.actionButtonsPosition = o.actionButtonsPosition || 'bottom';
         o.activeSlide = o.activeSlide || 1;
         o.appendTo = o.appendTo || null;
         o.autoCloseSeconds = o.autoCloseSeconds || null;
         o.autoPlay = o.autoPlay || null;
-        o.autoPlayDirection = o.autoPlayDirection || null;
-        o.customClass = o.customClass || 'promoSlider';
+        o.captionPosition = o.captionPosition || 'bottom';
         o.close = o.close !== false;
         o.closeButtonOnHover = o.closeButtonOnHover || null;
-        o.closeButtonText = o.closeButtonText || '×';
         o.closeButtonPosition = o.closeButtonPosition || 'top';
-        o.captionPosition = o.captionPosition || 'bottom';
-        o.fullscreen = o.fullscreen || null;
+        o.closeButtonText = o.closeButtonText || '×';
         o.counter = o.counter || null;
-        o.counterPosition = o.counterPosition || 'outside';
         o.counterOnHover = o.counterOnHover || null;
+        o.counterPosition = o.counterPosition || 'outside';
+        o.customClass = o.customClass || 'promoSlider';
         o.deleteCookieOnUrl = o.deleteCookieOnUrl || null;
+        o.disableKeyNav = o.disableKeyNav || null;
+        o.disableNavArrows = o.disableNavArrows || null;
         o.easing = o.easing || 'ease-in-out';
         o.effect = o.effect || null;
         o.endDate = o.endDate || null;
@@ -474,45 +475,44 @@ function PromoSlider(o) {
         o.fitContent = o.fitContent || null;
         o.forceOnUrl = o.forceOnUrl || null;
         o.frequency = o.frequency || null;
+        o.fullscreen = o.fullscreen || null;
         o.height = o.height || null;
         o.hideOnUrl = o.hideOnUrl || null;
+        o.infinite = o.infinite !== false;
         o.interstitialDuration = o.interstitialDuration || null;
         o.interstitialSkipText = o.interstitialSkipText || 'Skip this ad';
         o.interstitialText = o.interstitialText || 'or wait %s seconds';
         o.loadDelay = o.loadDelay || null;
         o.maxSlides = o.maxSlides || null;
+        o.modal = o.modal !== false;
         o.navArrowsOnHover = o.navArrowsOnHover || null;
         o.navArrowsPosition = o.navArrowsPosition || 'outside';
         o.noCloseOnClick = o.noCloseOnClick || false;
-        o.infinite = o.infinite !== false;
-        o.noKeyClose = o.noKeyClose || null;
-        o.disableNavArrows = o.disableNavArrows || null;
-        o.overlay = o.overlay !== false;
-        o.modal = o.modal !== false;
-        o.pager = o.pager || o.pager !== false;
-        o.noPauseOnHover = o.noPauseOnHover || null;
-        o.disableKeyNav = o.disableKeyNav || null;
+        o.keyClose = o.keyClose !== false;
+        o.pauseOnHover = o.pauseOnHover !== false;
         o.onPromoClick = o.onPromoClick || null;
         o.onPromoClose = o.onPromoClose || null;
         o.onPromoStart = o.onPromoStart || null;
+        o.overlay = o.overlay !== false;
+        o.pager = o.pager || o.pager !== false;
         o.pagerOnHover = o.pagerOnHover || null;
         o.pagerPosition = o.pagerPosition || 'top';
-        o.actionButtonsPosition = o.actionButtonsPosition || 'bottom';
+        o.promoID = o.promoID || 'promoSlider';
         o.randomize = o.randomize || false;
         o.reverseKeyNav = o.reverseKeyNav || false;
         o.rewindOnEnd = o.rewindOnEnd || null;
-        o.root = o.root || '';
+        o.reverseDirection = o.reverseDirection || false;
+        o.rootDir = o.rootDir || '';
         o.running = null;
         o.showOnUrl = o.showOnUrl || null;
         o.showProbability = o.showProbability || 1;
         o.slideDuration = o.slideDuration >= 0 ? o.slideDuration : 1;
         o.slides = o.slides || null;
         o.startDate = o.startDate || null;
-        o.promoID = o.promoID || 'promoSlider';
+        o.state = 'lightbox';
         o.vertical = o.vertical || null;
         o.waitAnimationFinish = o.waitAnimationFinish || null;
         o.width = o.width || null;
-        o.state = 'lightbox';
 
         if (!o.slides) {
             return false;
@@ -711,7 +711,7 @@ function PromoSlider(o) {
 
         for (i = 0; i < o.slides.length; i = i + 1) {
 
-            psImg = o.root + o.slides[i][0] || null;
+            psImg = o.rootDir + o.slides[i][0] || null;
             psLnk = o.slides[i][1] || null;
             psTgt = o.slides[i][2] || '_self';
             psCaption = o.slides[i][3] || null;
@@ -765,7 +765,7 @@ function PromoSlider(o) {
                     var result;
 
                     if (o.pager === 'thumb') {
-                        result = makeElement('img', {src: o.root + o.slides[s.getVisibleOrder(i)][0]});
+                        result = makeElement('img', {src: o.rootDir + o.slides[s.getVisibleOrder(i)][0]});
                     } else {
                         result = makeElement('span', null, o.pager === 'numeric' ? i + 1 : '•');
                     }
@@ -930,6 +930,8 @@ function PromoSlider(o) {
 
     s.appendSlide = function (prepend) {
 
+        prepend = o.reverseDirection ? !prepend : prepend;
+
         if (s && s.promo && s.promo.slides) {
 
             if (prepend) {
@@ -1031,7 +1033,7 @@ function PromoSlider(o) {
             }
         }
 
-        if (!o.noKeyClose) {
+        if (o.keyClose) {
             addEvent(document, 'keydown', s.events.keyClose);
         }
 
@@ -1164,7 +1166,7 @@ function PromoSlider(o) {
                 s.events.enableKeyNav();
             }
 
-            if (!o.noPauseOnHover) {
+            if (o.pauseOnHover) {
                 s.events.toggleAutoPlay();
             }
 
@@ -1427,7 +1429,7 @@ function PromoSlider(o) {
 
                 if (start) {
                     autoPlayID = setInterval(function (e) {
-                        s.events.stepSlide(e, o.autoPlayDirection);
+                        s.events.stepSlide(e);
                     }, o.autoPlay * 1000);
                 }
             }
@@ -1609,7 +1611,7 @@ function PromoSlider(o) {
 
     if (s.init()) {
 
-        loadSprite(o.root + o.slides[o.maxSlides === 1 ? 0 : 2][0], function () {
+        loadSprite(o.rootDir + o.slides[o.maxSlides === 1 ? 0 : 2][0], function () {
 
             s.setDimensions(this.width, this.height);
 
