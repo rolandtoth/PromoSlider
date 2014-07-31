@@ -343,6 +343,11 @@ function PromoSlider(o) {
             '.promoPager.thumb a {padding: 0; font: normal 32px/' + mainPadding + ' sans-serif; top: -4px;}',
             '.promoPager a img {width: auto; height: 32px; margin-top: 8px; border: 2px solid #fff;}',
             '.promoPager.numeric a {font: normal 17px/' + mainPadding + ' sans-serif; position: relative; padding-top: 0; padding-bottom: 0;}',
+            '.promoPager.progress {display: table;}',
+            '.promoPager.progress a {padding: 0; padding-right: 1px; display: table-cell;' + opacity(99) + 'height: ' + mainPadding + '}',
+            '.promoPager.progress a span {display: block; height: 6px; background: #fff; margin-top: 20px;}',
+            '.promoPager.progress a.active ~ a {' + opacity(66) + '}',
+            '.promoPager.progress a.active ~ a span {background: #000;}',
             '.promoContent.stretch .promoLink, .promoContent.stretch .promoImage, .promoContent.stretch .slideContentInner {width: 100% !important; height: 100% !important;}'
         ].join('');
 
@@ -351,25 +356,30 @@ function PromoSlider(o) {
             '.promoOverlay {background: #fff;' + opacity(99) + '}',
             '.interstitialText {z-index: 9996; position: fixed; top: 0; left: 0; width: 100%; pointer-events: all;}',
             '.interstitialSkipText {text-decoration: underline;}',
-            '.promoCaption {color: #fff;}'
+            '.promoCaption {color: #fff;}',
+            '.promoPager.progress a span {background: #000;}',
+            '.promoPager.progress a.active ~ a {' + opacity(25) + '}'
         ].join('.promoContainer.interstitial ');
 
         styles += [
-            '.promoContent.fullscreen {width: 100%;}',
-            ' .promoSlidesWrap, .promoContent.fullscreen {top: 0; left: 0; right: 0;}',
-            ', .promoContent.fullscreen .promoSlidesWrap {margin: 0; padding: 0; height: 100%; max-width: 100% !important; max-height: 100% !important;}',
-            ' .promoImage, .promoContent.fullscreen .promoLink {height: 100%; width: auto; max-width: none;}',
+            ' .promoContent {width: 100%;}',
+            ' .promoSlidesWrap, .promoContainer.fullscreen .promoContent {top: 0; left: 0; right: 0;}',
+            ' .promoContent, .promoContainer.fullscreen .promoSlidesWrap {margin: 0; padding: 0; height: 100%; max-width: 100% !important; max-height: 100% !important;}',
+            ' .promoImage, .promoContainer.fullscreen .promoLink {height: 100%; width: auto; max-width: none;}',
             ' .slideContentInner {height: 100%;}',
             ' .actionButtons {margin: 0; position: absolute; bottom: 3%; top: auto;}',
             ' .actionButtons.top {bottom: auto; top: 3%;}',
-            ' .promoPrev, .promoContent.fullscreen .promoNext {width: 120px;}',
+            ' .promoPrev, .promoContainer.fullscreen .promoNext {width: 120px;}',
             ' .promoPrev {left: 0;}',
             ' .promoNext {right: 0;}',
             ' .promoClose {right: ' + mainPadding + '; top: 3%; bottom: auto;}',
             ' .promoCounter {left: ' + mainPadding + '; top: 3%; bottom: auto;}',
             ' .promoPager {top: 3%; bottom: auto;}',
-            ' .promoPager.bottom {top: auto; bottom: 3%;}'
-        ].join('.promoContent.fullscreen');
+            ' .promoPager.bottom {top: auto; bottom: 3%;}',
+            ' .promoPager.progress a span {background: #fff;}',
+            ' .promoPager.progress a.active ~ a span {background: #000;}',
+            '.interstitial * {color: #000;}'
+        ].join('.promoContainer.fullscreen');
 
         styles += [
             '.promoContent.hover.counter .promoCounter { ' + opacity(0) + prefixer('transition: opacity 0.25s;') + ' }',
@@ -772,8 +782,12 @@ function PromoSlider(o) {
 
                     if (o.pager === 'thumb') {
                         result = makeElement('img', {src: o.rootDir + o.slides[s.getVisibleOrder(i)][0]});
+                    } else if (o.pager === 'numeric') {
+                        result = makeElement('span', null, i + 1);
+                    } else if (o.pager === 'progress') {
+                        result = makeElement('span', null);
                     } else {
-                        result = makeElement('span', null, o.pager === 'numeric' ? i + 1 : '•');
+                        result = makeElement('span', null, '•');
                     }
 
                     return result;
@@ -850,7 +864,7 @@ function PromoSlider(o) {
         addClass(s.promo.content, o.customClass);
 
         if (o.state === 'fullscreen') {
-            addClass(s.promo.content, 'fullscreen');
+            addClass(s.promo.container, 'fullscreen');
         }
 
         if (o.vertical) {
@@ -878,6 +892,8 @@ function PromoSlider(o) {
             addClass(s.promo.pager, 'numeric');
         } else if (o.pager === 'thumb') {
             addClass(s.promo.pager, 'thumb');
+        } else if (o.pager === 'progress') {
+            addClass(s.promo.pager, 'progress');
         }
 
         if (o.pagerPosition === 'inside') {
@@ -1512,18 +1528,14 @@ function PromoSlider(o) {
 
         toggleFullscreen: function () {
 
-            if (o.state === 'interstitial') {
-                return false;
-            }
-
             if (o.state === 'fullscreen') {
-                removeClass(s.promo.content, ' fullscreen');
+                removeClass(s.promo.container, ' fullscreen');
 
                 o.state = 'lightbox';
 
             } else {
 
-                addClass(s.promo.content, 'fullscreen');
+                addClass(s.promo.container, 'fullscreen');
 
                 if (o.close) {
                     s.promo.content.appendChild(s.promo.close);
@@ -1553,7 +1565,7 @@ function PromoSlider(o) {
                         s.promo.container.parentNode.removeChild(s.promo.container);
 
                         removeClass(s.promo.container, ' fadeOut');
-                        removeClass(s.promo.content, ' fullscreen');
+                        removeClass(s.promo.container, ' fullscreen');
                         addClass(s.promo.content, 'embed');
 
                         o.appendTo.appendChild(s.promo.content);

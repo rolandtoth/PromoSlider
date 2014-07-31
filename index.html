@@ -195,6 +195,7 @@
         <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a></li>
         <li><a id="thumb" href="#" title="Show image thumbnails as pager items">Thumb pager</a></li>
         <li><a id="numeric" href="#" title="Show slide numbers in pager instead of bullets">Numeric pager</a></li>
+        <li><a id="progress" href="#" title="Show progressbar style pager">Progress pager</a></li>
         <li><a id="counter" href="#" title="Add slide counter">Counter</a></li>
         <li><a id="customCounter" href="#" title="Use custom counter text template">Custom counter</a></li>
         <li><a id="finite" href="#" title="Disable going to first slide after last slide">Finite</a></li>
@@ -353,6 +354,12 @@ document.getElementById('thumb').onclick = function () {
 // numeric pager
 document.getElementById('numeric').onclick = function () {
     demoSlider(['pager', 'numeric']);
+    return false;
+};
+
+// progress pager
+document.getElementById('progress').onclick = function () {
+    demoSlider(['pager', 'progress']);
     return false;
 };
 
