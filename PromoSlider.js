@@ -291,7 +291,8 @@ function PromoSlider(o) {
         var styles, mainPadding = '48px';
 
         styles = [
-            '.promoContainer a {background: transparent; outline: none !important;}',
+            '.promoContainer a {background: transparent;}',
+            '.promoContent a:focus {background: transparent; outline: 0;}',
             '.promoContainer {' + opacity(0) + 'position: fixed; width: 100%; height: 100%; text-align: center; top: 0; left: 0; z-index: 9991; pointer-events: none;}',
             '.promoContainer * {color: #fff; text-decoration: none;}',
             '.promoContainer.single .promoSlides {width: 100% !important; left: 0 !important;}',
@@ -310,7 +311,7 @@ function PromoSlider(o) {
             '.slideContentInner {width: auto; height: auto; display: inline-block; max-width: 100%; max-height: 100%; position: relative;}',
             '.promoImage, .promoLink {position: relative; display: inline-block; max-width: 100%; max-height: 100%; margin: 0 auto;}',
             '.embed .promoLink[href="#close"] {cursor: default;}',
-            '.promoImage {vertical-align: middle; border: none;}',
+            '.promoImage {vertical-align: middle; border: none; display: block;}',
             verticalCenter('.slideContent'),
             '.promoClose {position: absolute; top: -' + mainPadding + '; right: -16px; display: block; text-align: right; padding: 0 16px; z-index: 9992; font: normal 17px/' + mainPadding + ' sans-serif;' + opacity(75) + 'transition: 0.25s opacity; z-index: 9998;}',
             '.promoClose.inside {top: 0; right: 0;}',
@@ -340,7 +341,7 @@ function PromoSlider(o) {
             '.promoPager a {display: inline-block; position: relative; padding: 0 6px; margin: 0;' + opacity(50) + 'font: normal 36px/' + mainPadding + ' sans-serif;' + prefixer('transition: opacity ' + o.slideDuration + 's ease-out;') + '-webkit-transform: translateZ(0); text-decoration: none;}',
             '.promoPager a.active, .promoPager a.active:hover, .promoPager a:hover {' + opacity(99) + prefixer('transition-duration: 0.5s;)') + '}',
             '.promoPager.thumb a {padding: 0; font: normal 32px/' + mainPadding + ' sans-serif; top: -4px;}',
-            '.promoPager a img {width: auto; height: 32px; margin-top: 8px;}',
+            '.promoPager a img {width: auto; height: 32px; margin-top: 8px; border: 2px solid #fff;}',
             '.promoPager.numeric a {font: normal 17px/' + mainPadding + ' sans-serif; position: relative; padding-top: 0; padding-bottom: 0;}',
             '.promoContent.stretch .promoLink, .promoContent.stretch .promoImage, .promoContent.stretch .slideContentInner {width: 100% !important; height: 100% !important;}'
         ].join('');
@@ -503,6 +504,7 @@ function PromoSlider(o) {
         o.reverseKeyNav = o.reverseKeyNav || false;
         o.rewindOnEnd = o.rewindOnEnd || null;
         o.reverseDirection = o.reverseDirection || false;
+        o.reverseWheelNav = o.reverseWheelNav || false;
         o.rootDir = o.rootDir || '';
         o.running = null;
         o.showOnUrl = o.showOnUrl || null;
@@ -513,6 +515,7 @@ function PromoSlider(o) {
         o.state = 'lightbox';
         o.vertical = o.vertical || null;
         o.waitAnimationFinish = o.waitAnimationFinish || null;
+        o.wheelNav = o.wheelNav !== false;
         o.width = o.width || null;
 
         if (!o.slides) {
@@ -1176,6 +1179,10 @@ function PromoSlider(o) {
                 s.events.toggleAutoPlay();
             }
 
+            if (o.wheelNav) {
+                s.events.enableWheelNav();
+            }
+
             s.events.stopTimer(autoCloseID);
         },
 
@@ -1184,6 +1191,8 @@ function PromoSlider(o) {
             if (!o.disableKeyNav && o.appendTo) {
                 s.events.disableKeyNav();
             }
+
+            s.events.disableWheelNav();
 
             s.events.toggleAutoPlay(true);
         },
@@ -1427,6 +1436,16 @@ function PromoSlider(o) {
             removeEvent(document, 'keydown', s.events.keyNav);
         },
 
+        enableWheelNav: function () {
+            addEvent(document, 'mousewheel', s.events.wheelNav);
+            addEvent(document, 'DOMMouseScroll', s.events.wheelNav);
+        },
+
+        disableWheelNav: function () {
+            removeEvent(document, 'mousewheel', s.events.wheelNav);
+            removeEvent(document, 'DOMMouseScroll', s.events.wheelNav);
+        },
+
         toggleAutoPlay: function (start) {
 
             if (o.autoPlay) {
@@ -1464,6 +1483,25 @@ function PromoSlider(o) {
                 if (e.keyCode === 37 || e.keyCode === 40) {
                     s.events.stepSlide(e, !o.reverseKeyNav);
                 }
+            }
+        },
+
+        wheelNav: function (e) {
+
+            var delta;
+
+            if (o.slider && s) {
+
+                e = window.event || e;
+
+                delta = e.detail ? e.detail * (-120) : e.wheelDelta;
+
+                delta = delta > 0;
+
+                delta = o.reverseDirection ? !delta : delta;
+                delta = o.reverseWheelNav ? !delta : delta;
+
+                s.events.stepSlide(e, delta);
             }
         },
 

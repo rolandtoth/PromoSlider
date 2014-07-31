@@ -6,6 +6,7 @@
 
     <link rel="shortcut icon" type="image/ico" href="PromoSlider.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <script src="PromoSlider.js" type="text/javascript"></script>
 
@@ -93,15 +94,7 @@
             margin-top: 24px;
             height: 224px;
             transition: height 0.25s;
-
-            background: #e9eaeb; /* Old browsers */
-            background: -moz-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* FF3.6+ */
-            background: -webkit-gradient(linear, left top, right top, color-stop(0%, #F4F4F4), color-stop(50%, #dbdbdb), color-stop(100%, #F4F4F4)); /* Chrome,Safari4+ */
-            background: -webkit-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* Chrome10+,Safari5.1+ */
-            background: -o-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* Opera 11.10+ */
-            background: -ms-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* IE10+ */
-            background: linear-gradient(to right, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* W3C */
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F4F4F4', endColorstr='#fefefe', GradientType=1); /* IE6-9 */
+            background: #e9eaeb;
         }
 
         .sliderPlaceholder:empty {
@@ -141,7 +134,7 @@
             text-transform: uppercase;
             font-weight: normal;
             text-decoration: none;
-            font-size: 24px;
+            font-size: 20px;
             line-height: 1;
             position: absolute;
             right: 0;
@@ -213,6 +206,8 @@
         <li><a id="disableCaptions" href="#" title="Disable captions on all slides">Disable captions</a></li>
         <li><a id="firstSlide" href="#" title="Shift slides to make slide number 2 the first slide">First slide 2</a></li>
         <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Start at slide 4</a></li>
+        <li><a id="reverseWheelNav" href="#" title="Reverse slide direction on wheel up/down">Reverse wheel nav</a></li>
+        <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel nav</a></li>
         <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
     </ul>
 
@@ -468,6 +463,18 @@ document.getElementById('firstSlide').onclick = function () {
 // start at slide 4
 document.getElementById('activeSlide').onclick = function () {
     demoSlider(['activeSlide', 4]);
+    return false;
+};
+
+// reverse wheel navigation
+document.getElementById('reverseWheelNav').onclick = function () {
+    demoSlider(['reverseWheelNav', true]);
+    return false;
+};
+
+// disable wheel navigation
+document.getElementById('disableWheelNav').onclick = function () {
+    demoSlider(['wheelNav', false]);
     return false;
 };
 
