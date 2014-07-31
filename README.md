@@ -7,3 +7,8 @@ Demo
 -----------
 
 [http://rawgit.com/rolandtoth/PromoSlider/master/index.html](http://rawgit.com/rolandtoth/PromoSlider/master/index.html)
+
+Options
+-----------
+
+Coming soon

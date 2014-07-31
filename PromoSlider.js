@@ -306,7 +306,7 @@ function PromoSlider(o) {
             '.promoContent.embed * {color: #000;}',
             '.promoContent.embed {margin: 20px; clear: both; position: relative; top: 0; left: auto; right: auto; bottom: auto; z-index: 9980;}',
             '.promoContent.embed .promoCaption {color: #fff;}',
-            '.promoSlide {' + prefixer('transform-origin: center;') + 'width: 100%; height: 100%; display: block; position: relative; text-align: center;}',
+            '.promoSlide {' + prefixer('transform-origin: center;') + prefixer('transform: translateZ(0);') + 'width: 100%; height: 100%; display: block; position: relative; text-align: center;}',
             '.slideContent {height: 100%; overflow: hidden;}',
             '.slideContentInner {width: auto; height: auto; display: inline-block; max-width: 100%; max-height: 100%; position: relative;}',
             '.promoImage, .promoLink {position: relative; display: inline-block; max-width: 100%; max-height: 100%; margin: 0 auto;}',
@@ -360,13 +360,15 @@ function PromoSlider(o) {
             ', .promoContent.fullscreen .promoSlidesWrap {margin: 0; padding: 0; height: 100%; max-width: 100% !important; max-height: 100% !important;}',
             ' .promoImage, .promoContent.fullscreen .promoLink {height: 100%; width: auto; max-width: none;}',
             ' .slideContentInner {height: 100%;}',
-            ' .actionButtons {margin: 0; position: absolute; bottom: ' + mainPadding + '; top: auto;}',
+            ' .actionButtons {margin: 0; position: absolute; bottom: 3%; top: auto;}',
+            ' .actionButtons.top {bottom: auto; top: 3%;}',
             ' .promoPrev, .promoContent.fullscreen .promoNext {width: 120px;}',
             ' .promoPrev {left: 0;}',
             ' .promoNext {right: 0;}',
             ' .promoClose {right: ' + mainPadding + '; top: 3%; bottom: auto;}',
             ' .promoCounter {left: ' + mainPadding + '; top: 3%; bottom: auto;}',
-            ' .promoPager {top: 3%; bottom: auto;}'
+            ' .promoPager {top: 3%; bottom: auto;}',
+            ' .promoPager.bottom {top: auto; bottom: 3%;}'
         ].join('.promoContent.fullscreen');
 
         styles += [
@@ -930,6 +932,7 @@ function PromoSlider(o) {
         s.promo.content.style.maxHeight = o.height;
 
         s.repaintStyle(s.promo.slides.childNodes[0].querySelector('.slideContentInner'));
+
     };
 
     s.appendSlide = function (prepend) {
@@ -1195,6 +1198,7 @@ function PromoSlider(o) {
             s.events.disableWheelNav();
 
             s.events.toggleAutoPlay(true);
+
         },
 
         onSlide: function (e, index) {
@@ -1376,6 +1380,7 @@ function PromoSlider(o) {
             }
 
             s = null;
+            o = null;
         },
 
         close: function (e) {
@@ -1556,6 +1561,8 @@ function PromoSlider(o) {
                         if (o.close) {
                             s.promo.close.parentNode.removeChild(s.promo.close);
                         }
+
+                        s.events.sliderBlur();
 
                         o.state = 'embed';
 
