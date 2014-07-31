@@ -454,6 +454,7 @@ function PromoSlider(o) {
         o.appendTo = o.appendTo || null;
         o.autoCloseSeconds = o.autoCloseSeconds || null;
         o.autoPlay = o.autoPlay || null;
+        o.disableCaptions = o.disableCaptions || false;
         o.captionPosition = o.captionPosition || 'bottom';
         o.close = o.close !== false;
         o.closeButtonOnHover = o.closeButtonOnHover || null;
@@ -731,7 +732,7 @@ function PromoSlider(o) {
                     slideContentInner.appendChild(promoImage);
                 }
 
-                if (psCaption) {
+                if (!o.disableCaptions && psCaption) {
                     if (o.captionPosition === 'top') {
                         addClass(promoCaption, 'top');
                     }
@@ -1002,15 +1003,14 @@ function PromoSlider(o) {
     s.addListeners = function () {
 
         var i, counter, skipLink,
-            actionButtons = s.promo.actionButtons,
+            captionLinks = s.promo.slides.querySelectorAll('.promoCaption a'),
+            actionButtonLinks = s.promo.content.querySelectorAll('.actionButtons > a'),
+            slideLinks = s.promo.slides.querySelectorAll('.slideContentInner > a'),
             openLink = function (e) {
                 return s.events.clickHandler(e, this);
             },
             gotoSlide = function (e) {
                 return s.events.gotoSlide(e, s.getObjPosition(this));
-            },
-            slide = function (i) {
-                return s.promo.slides.childNodes[i].firstChild.firstChild;
             };
 
         if (o.close) {
@@ -1019,18 +1019,6 @@ function PromoSlider(o) {
 
         if (!o.modal) {
             addEvent(s.promo.overlay, 'click', s.events.close);
-        }
-
-        if (actionButtons && actionButtons.childNodes) {
-            for (i = 0; i < actionButtons.childNodes.length; i = i + 1) {
-                addEvent(actionButtons.childNodes[i], 'click', openLink);
-            }
-        }
-
-        for (i = 0; i < s.promo.slides.childNodes.length; i = i + 1) {
-            if (slide(i).firstChild.nodeName === 'A') {
-                addEvent(slide(i).firstChild, 'click', openLink);
-            }
         }
 
         if (o.keyClose) {
@@ -1065,6 +1053,24 @@ function PromoSlider(o) {
         }
 
         if (o.slider) {
+
+            if (actionButtonLinks.length) {
+                for (i = 0; i < actionButtonLinks.length; i = i + 1) {
+                    addEvent(actionButtonLinks[i], 'click', openLink);
+                }
+            }
+
+            if (slideLinks.length) {
+                for (i = 0; i < slideLinks.length; i = i + 1) {
+                    addEvent(slideLinks[i], 'click', openLink);
+                }
+            }
+
+            if (captionLinks.length) {
+                for (i = 0; i < captionLinks.length; i = i + 1) {
+                    addEvent(captionLinks[i], 'click', openLink);
+                }
+            }
 
             if (!o.disableNavArrows) {
 
