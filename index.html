@@ -23,7 +23,7 @@
         h1 {
             text-align: center;
             margin: 48px 0 16px;
-            color: #999;
+            color: #777;
             font-size: 30px;
         }
 
@@ -88,9 +88,11 @@
             color: #fff;
         }
 
-        #sliderPlaceholder {
+        .sliderPlaceholder {
             width: 100%;
             margin-top: 24px;
+            height: 224px;
+            transition: height 0.25s;
 
             background: #e9eaeb; /* Old browsers */
             background: -moz-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* FF3.6+ */
@@ -100,17 +102,14 @@
             background: -ms-linear-gradient(left, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* IE10+ */
             background: linear-gradient(to right, #F4F4F4 0%, #dbdbdb 50%, #F4F4F4 100%); /* W3C */
             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F4F4F4', endColorstr='#fefefe', GradientType=1); /* IE6-9 */
-
-            height: 224px;
-            transition: height 0.25s;
         }
 
-        #sliderPlaceholder:empty {
+        .sliderPlaceholder:empty {
             height: 0;
         }
 
-        #sliderPlaceholder > div {
-            margin: 0 auto;
+        .sliderPlaceholder > div {
+            margin: 0 auto !important;
             width: 300px;
         }
 
@@ -148,7 +147,7 @@
     CSS3 powered JavaScript image slider
 </p>
 
-<section id="sliderPlaceholder"></section>
+<section class="sliderPlaceholder"></section>
 
 <section class="demos">
 
@@ -159,7 +158,8 @@
         <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a></li>
         <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a></li>
         <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a></li>
-        <li><a id="fullscreenStretch" href="#" title="Show fullscreen slider with images stretched to full width and height">Fullscreen stretch</a></li>
+        <li><a id="fullscreenStretch" href="#" title="Show fullscreen slider with images stretched to full width and height">Fullscreen stretch</a>
+        </li>
         <li><a id="interstitial" href="#" title="Set slider style to interstitial">Interstitial</a></li>
         <li><a id="customClose" href="#" title="Use custom close button text">Custom close</a></li>
         <li><a id="randomize" href="#" title="Show slides in random order">Randomize</a></li>
@@ -176,8 +176,8 @@
         <li><a id="insideControls" href="#" title="Show controls inside slider boundaries">Inside controls</a></li>
         <li><a id="noAnimation" href="#" title="Disable slide animation">No animation</a></li>
         <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a></li>
-        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation end</a></li>
-        <li><a id="topCaption" href="#" title="Override default bottom caption position">Top caption</a></li>
+        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation</a></li>
+        <li><a id="topCaption" href="#" title="Override default caption position bottom">Top caption</a></li>
         <li><a id="firstSlide" href="#" title="Shift slides so that slide number two is the first">First slide 2</a></li>
         <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Start at slide 4</a></li>
         <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
@@ -226,7 +226,7 @@ function demoSlider() {
 
 embedSlider = function () {
     demoSlider(
-            ['appendTo', '#sliderPlaceholder'],
+            ['appendTo', '.sliderPlaceholder'],
             ['pagerPosition', 'bottom'],
             ['actionButtonsPosition', 'top'],
             ['actionButtons', [
