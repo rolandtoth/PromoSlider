@@ -613,11 +613,11 @@ function PromoSlider(o) {
 
         } else if (o.appendTo) {
 
-            if (!document.getElementById(o.appendTo)) {
+            if (!document.querySelector(o.appendTo)) {
                 return false;
             }
 
-            o.appendTo = document.getElementById(o.appendTo);
+            o.appendTo = document.querySelector(o.appendTo);
             o.autoCloseSeconds = null;
             o.interstitialDuration = null;
             o.fullscreen = null;
