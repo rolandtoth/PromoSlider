@@ -600,7 +600,7 @@ function PromoSlider(o) {
             addClass(s.promo.content, 'ie8');
         }
 
-//        s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
+        s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
     };
 
     s.buildPromo = function () {
@@ -868,7 +868,7 @@ function PromoSlider(o) {
         }
 
         if (o.keyClose) {
-            addEvent(document, 'keydown', s.events.keyClose);
+            addEvent(window, 'keydown', s.events.keyClose);
         }
 
         if (o.interstitialDuration) {
@@ -1316,9 +1316,8 @@ function PromoSlider(o) {
 
                 if (e.keyCode === 38 || e.keyCode === 39) {
                     s.events.stepSlide(e, o.reverseKeyNav);
-                }
 
-                if (e.keyCode === 37 || e.keyCode === 40) {
+                } else if (e.keyCode === 37 || e.keyCode === 40) {
                     s.events.stepSlide(e, !o.reverseKeyNav);
                 }
             }
