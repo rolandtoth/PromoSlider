@@ -1168,25 +1168,32 @@ function PromoSlider(o) {
 
             offset = Math.abs(offset);
 
-            if (offset === 1) {
-                s.events.stepSlide(e, prev);
-                return false;
-            }
+//            if (offset === 1) {
+//                s.events.stepSlide(e, prev);
+//                return false;
+//            }
 
             o.current = index;
 
             o.running = o.waitAnimationFinish;
 
             addClass(s.promo.content, 'seekAnim');
+            addClass(s.promo.slidesWrap, 'fadeOut');
 
-            for (i = 0; i < offset; i = i + 1) {
-                if (i === offset - 2) {
-                    removeClass(s.promo.content, ' seekAnim');
+            setTimeout(function () {
+
+                for (i = 0; i < offset; i = i + 1) {
+                    s.appendSlide(prev);
                 }
-                s.appendSlide(prev);
-            }
 
-            o.running = false;
+                setTimeout(function () {
+                    removeClass(s.promo.content, ' seekAnim');
+                    removeClass(s.promo.slidesWrap, ' fadeOut');
+                    addClass(s.promo.slidesWrap, 'fadeIn');
+                }, 0);
+
+                o.running = false;
+            }, 250);
         },
 
         destroyPromo: function () {
