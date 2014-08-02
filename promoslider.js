@@ -1180,7 +1180,7 @@ function PromoSlider(o) {
             addClass(s.promo.content, 'seekAnim');
 
             for (i = 0; i < offset; i = i + 1) {
-                if (i === offset - 1) {
+                if (i === offset - 2) {
                     removeClass(s.promo.content, ' seekAnim');
                 }
                 s.appendSlide(prev);
