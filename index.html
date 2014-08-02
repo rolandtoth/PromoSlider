@@ -237,6 +237,7 @@ function demoSlider() {
 
     var o = {
         rootDir: 'https://raw.githubusercontent.com/rolandtoth/PromoSlider/master/images/',
+        rootDir: 'images/',
         slides: [
             ['01.jpg', '#next', '', 'Slide 1: click for next slide'],
             ['02.jpg', '#last', '', 'Slide 2: click for last slide'],
@@ -344,7 +345,10 @@ document.getElementById('modal').onclick = function () {
 
 // auto play
 document.getElementById('autoPlay').onclick = function () {
-    demoSlider(['autoPlay', 2.5]);
+    demoSlider(['autoPlay', 2.5], ['actionButtons', [
+        ['Start', '#start'],
+        ['Stop', '#stop']
+    ]]);
     return false;
 };
 
