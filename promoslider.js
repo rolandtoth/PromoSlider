@@ -1,7 +1,7 @@
 /*!
  * PromoSlider v1.0 - JavaScript Image Slider
  * https://github.com/rolandtoth/PromoSlider
- * last update: 2014.08.01.
+ * last update: 2014.08.03.
  *
  * Licensed under the MIT license
  * Copyright 2014 Roland Toth (tpr)
@@ -1344,8 +1344,8 @@ function PromoSlider(o) {
                 o.state = 'fullscreen';
             }
 
-//            s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
-//            s.repaintStyle(s.promo.slides.childNodes[2], '.slideContentInner');
+            s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
+            s.repaintStyle(s.promo.slides.childNodes[2], '.slideContentInner');
 
             return false;
         },
