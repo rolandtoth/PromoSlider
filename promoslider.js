@@ -12,8 +12,6 @@
 /*jslint browser: true */
 /*jslint sloppy: true */
 
-var isWebkit = document.addEventListener && document.documentElement.style.hasOwnProperty('WebkitAppearance');
-
 var supportsTransitions = (function () {
     var s = document.createElement('p').style,
         v = ['ms', 'O', 'Moz', 'Webkit'];
@@ -124,6 +122,12 @@ function removeEvent(target, type, handler) {
     }
     if (target.detachEvent) {
         target.detachEvent('on' + type, handler);
+    }
+}
+
+function removeElement(obj) {
+    if (obj) {
+        obj.parentNode.removeChild(obj);
     }
 }
 
@@ -501,18 +505,18 @@ function PromoSlider(o) {
         var i;
 
         addClass(s.promo.container, o.customClass);
-        addClass(s.promo.content, o.customClass);
+        addClass(s.promo.contentWrap, o.customClass);
 
         if (o.state === 'fullscreen') {
             addClass(s.promo.container, 'fullscreen');
         }
 
         if (o.vertical) {
-            addClass(s.promo.content, 'vertical');
+            addClass(s.promo.contentWrap, 'vertical');
         }
 
         if (o.effect === 'fade') {
-            addClass(s.promo.content, 'fade');
+            addClass(s.promo.contentWrap, 'fade');
         }
 
         if (o.navArrowsPosition === 'inside') {
@@ -549,27 +553,27 @@ function PromoSlider(o) {
         }
 
         if (o.closeButtonOnHover) {
-            addClass(s.promo.content, 'hover');
-            addClass(s.promo.content, 'close');
+            addClass(s.promo.contentWrap, 'hover');
+            addClass(s.promo.contentWrap, 'close');
         }
 
         if (o.counterOnHover) {
-            addClass(s.promo.content, 'hover');
-            addClass(s.promo.content, 'counter');
+            addClass(s.promo.contentWrap, 'hover');
+            addClass(s.promo.contentWrap, 'counter');
         }
 
         if (o.navArrowsOnHover) {
-            addClass(s.promo.content, 'hover');
-            addClass(s.promo.content, 'arrows');
+            addClass(s.promo.contentWrap, 'hover');
+            addClass(s.promo.contentWrap, 'arrows');
         }
 
         if (o.pagerOnHover) {
-            addClass(s.promo.content, 'hover');
-            addClass(s.promo.content, 'pager');
+            addClass(s.promo.contentWrap, 'hover');
+            addClass(s.promo.contentWrap, 'pager');
         }
 
         if (o.fitContent === 'stretch') {
-            addClass(s.promo.content, 'stretch');
+            addClass(s.promo.contentWrap, 'stretch');
         }
 
         if (o.fadeInDuration !== 0) {
@@ -585,11 +589,11 @@ function PromoSlider(o) {
             s.events.onSlide();
 
         } else {
-            addClass(s.promo.content, 'single');
+            addClass(s.promo.contentWrap, 'single');
         }
 
-        s.promo.content.style.maxWidth = o.width;
-        s.promo.content.style.maxHeight = o.height;
+        s.promo.contentWrap.style.maxWidth = o.width;
+        s.promo.contentWrap.style.maxHeight = o.height;
 
         if (!supportsTransitions) {
             addClass(s.promo.container, 'noTransition');
@@ -597,7 +601,7 @@ function PromoSlider(o) {
 
         if (!document.addEventListener) {
             addClass(s.promo.container, 'ie8');
-            addClass(s.promo.content, 'ie8');
+            addClass(s.promo.contentWrap, 'ie8');
         }
 
         s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
@@ -610,6 +614,7 @@ function PromoSlider(o) {
         s.promo = {
             overlay: makeElement('div', {'class': 'promoOverlay'}),
             container: makeElement('div', {'class': 'promoContainer'}),
+            contentWrap: makeElement('div', {'class': 'promoContentWrap'}),
             content: makeElement('div', {'class': 'promoContent'}),
             ratioPlaceholder: makeElement('div', {'class': 'ratioPlaceholder'}),
             slidesWrap: makeElement('div', {'class': 'promoSlidesWrap'}),
@@ -617,6 +622,10 @@ function PromoSlider(o) {
             close: makeElement('a', {'class': 'promoClose', href: '#'}, o.closeButtonText),
             actionButtons: makeElement('div', {'class': 'actionButtons'})
         };
+
+        if (o.overlay && !document.querySelector('.promoOverlay')) {
+            s.promo.container.appendChild(s.promo.overlay);
+        }
 
         if (o.interstitialDuration) {
 
@@ -670,6 +679,7 @@ function PromoSlider(o) {
 
         s.promo.slidesWrap.appendChild(s.promo.slides);
         s.promo.content.appendChild(s.promo.slidesWrap);
+        s.promo.contentWrap.appendChild(s.promo.content);
 
         if (o.slider) {
 
@@ -709,7 +719,7 @@ function PromoSlider(o) {
                     s.promo.pager.appendChild(pager);
                 }
 
-                s.promo.content.appendChild(s.promo.pager);
+                s.promo.contentWrap.appendChild(s.promo.pager);
             }
 
             if (!o.disableNavArrows) {
@@ -717,8 +727,8 @@ function PromoSlider(o) {
                 s.promo.nextButton = makeElement('a', {'class': 'promoNext', href: '#'}, '<span>›</span>');
                 s.promo.prevButton = makeElement('a', {'class': 'promoPrev', href: '#'}, '<span>‹</span>');
 
-                s.promo.content.appendChild(s.promo.nextButton);
-                s.promo.content.appendChild(s.promo.prevButton);
+                s.promo.contentWrap.appendChild(s.promo.nextButton);
+                s.promo.contentWrap.appendChild(s.promo.prevButton);
             }
 
             if (o.counter) {
@@ -730,16 +740,12 @@ function PromoSlider(o) {
 
                 s.promo.counter = makeElement('p', {'class': 'promoCounter'}, o.counter);
 
-                s.promo.content.appendChild(s.promo.counter);
+                s.promo.contentWrap.appendChild(s.promo.counter);
             }
         }
 
-        if (o.overlay && !document.querySelector('.promoOverlay')) {
-            s.promo.container.appendChild(s.promo.overlay);
-        }
-
         if (o.close && !o.appendTo) {
-            s.promo.content.appendChild(s.promo.close);
+            s.promo.contentWrap.appendChild(s.promo.close);
         }
 
         if (o.actionButtons && o.actionButtons.length) {
@@ -756,17 +762,17 @@ function PromoSlider(o) {
                 );
             }
 
-            s.promo.content.appendChild(s.promo.actionButtons);
+            s.promo.contentWrap.appendChild(s.promo.actionButtons);
         }
+
+        s.promo.container.appendChild(s.promo.contentWrap);
 
         s.promo.content.appendChild(s.promo.ratioPlaceholder);
         s.promo.ratioPlaceholder.style.paddingTop = o.ratio * 100 + '%';
 
-        s.promo.container.appendChild(s.promo.content);
-
         if (o.state === 'embed') {
-            o.appendTo.appendChild(s.promo.content);
-            addClass(s.promo.content, 'embed');
+            o.appendTo.appendChild(s.promo.contentWrap);
+            addClass(s.promo.contentWrap, 'embed');
         } else {
             body.appendChild(s.promo.container);
         }
@@ -850,7 +856,7 @@ function PromoSlider(o) {
 
         var i, counter, skipLink,
             captionLinks = s.promo.slides.querySelectorAll('.promoCaption a'),
-            actionButtonLinks = s.promo.content.querySelectorAll('.actionButtons > a'),
+            actionButtonLinks = s.promo.contentWrap.querySelectorAll('.actionButtons > a'),
             slideLinks = s.promo.slides.querySelectorAll('.slideContentInner > a'),
             openLink = function (e) {
                 return s.events.clickHandler(e, this);
@@ -940,8 +946,8 @@ function PromoSlider(o) {
                 addEvent(document, 'keydown', s.events.keyNav);
             }
 
-            addEvent(s.promo.content, 'mouseover', s.events.sliderHover);
-            addEvent(s.promo.content, 'mouseout', s.events.sliderBlur);
+            addEvent(s.promo.contentWrap, 'mouseover', s.events.sliderHover);
+            addEvent(s.promo.contentWrap, 'mouseout', s.events.sliderBlur);
 
             s.events.toggleAutoPlay(true);
         }
@@ -996,14 +1002,13 @@ function PromoSlider(o) {
 
         var tmp;
 
-        if (isWebkit && obj) {
+        if (obj) {
 
             obj = obj.querySelector(selector);
 
             obj.style.display = 'none';
             tmp = obj.offsetHeight;
             obj.removeAttribute('style');
-
             return tmp;
         }
     };
@@ -1177,34 +1182,19 @@ function PromoSlider(o) {
 
             o.running = o.waitAnimationFinish;
 
-            addClass(s.promo.content, 'seekAnim');
-            addClass(s.promo.slidesWrap, 'fadeOut');
+            for (i = 0; i < offset; i = i + 1) {
+                s.appendSlide(prev);
+            }
 
             setTimeout(function () {
-
-                for (i = 0; i < offset; i = i + 1) {
-                    s.appendSlide(prev);
-                }
-
-                setTimeout(function () {
-                    removeClass(s.promo.content, ' seekAnim');
-                    removeClass(s.promo.slidesWrap, ' fadeOut');
-                    addClass(s.promo.slidesWrap, 'fadeIn');
-                }, 0);
-
                 o.running = false;
-            }, 250);
+            }, o.slideDuration * 1000);
         },
 
         destroyPromo: function () {
 
-            if (s.promo.container.parentNode) {
-                s.promo.container.parentNode.removeChild(s.promo.container);
-            }
-
-            if (s.promo.content.parentNode) {
-                s.promo.content.parentNode.removeChild(s.promo.content);
-            }
+            removeElement(s.promo.container);
+            removeElement(s.promo.contentWrap);
 
             s = null;
         },
@@ -1347,15 +1337,15 @@ function PromoSlider(o) {
                 addClass(s.promo.container, 'fullscreen');
 
                 if (o.close) {
-                    s.promo.content.appendChild(s.promo.close);
+                    s.promo.contentWrap.appendChild(s.promo.close);
                     addEvent(s.promo.close, 'click', s.events.close);
                 }
 
                 o.state = 'fullscreen';
             }
 
-            s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
-            s.repaintStyle(s.promo.slides.childNodes[2], '.slideContentInner');
+//            s.repaintStyle(s.promo.slides.childNodes[0], '.slideContentInner');
+//            s.repaintStyle(s.promo.slides.childNodes[2], '.slideContentInner');
 
             return false;
         },
@@ -1370,17 +1360,17 @@ function PromoSlider(o) {
 
                     setTimeout(function () {
 
-                        s.promo.overlay.parentNode.removeChild(s.promo.overlay);
-                        s.promo.container.parentNode.removeChild(s.promo.container);
+                        removeElement(s.promo.overlay);
+                        removeElement(s.promo.container);
 
                         removeClass(s.promo.container, ' fadeOut');
                         removeClass(s.promo.container, ' fullscreen');
-                        addClass(s.promo.content, 'embed');
+                        addClass(s.promo.contentWrap, 'embed');
 
-                        o.appendTo.appendChild(s.promo.content);
+                        o.appendTo.appendChild(s.promo.contentWrap);
 
                         if (o.close) {
-                            s.promo.close.parentNode.removeChild(s.promo.close);
+                            removeElement(s.promo.close);
                         }
 
                         s.events.sliderBlur();
@@ -1395,13 +1385,13 @@ function PromoSlider(o) {
                 } else {
 
                     body.appendChild(s.promo.container);
-                    s.promo.container.appendChild(s.promo.content);
+                    s.promo.container.appendChild(s.promo.contentWrap);
 
-                    s.promo.container.appendChild(s.promo.overlay);
-                    removeClass(s.promo.content, ' embed');
+                    s.promo.container.insertBefore(s.promo.overlay, s.promo.container.firstChild);
+                    removeClass(s.promo.contentWrap, ' embed');
 
                     if (o.close) {
-                        s.promo.content.appendChild(s.promo.close);
+                        s.promo.contentWrap.appendChild(s.promo.close);
                         addEvent(s.promo.close, 'click', s.events.close);
                     }
 
@@ -1460,7 +1450,7 @@ function PromoSlider(o) {
             }
 
             if (link.indexOf('#start') !== -1) {
-                o.autoPlay = o.autoPlay.replace('stopped', '');
+                o.autoPlay = o.autoPlay.toString().replace('stopped', '');
                 s.events.toggleAutoPlay(true);
                 return false;
             }

@@ -20,7 +20,6 @@
             background: #f4f4f4;
             margin: 0;
             padding: 0;
-            min-width: 320px;
         }
 
         h1 {
@@ -40,8 +39,8 @@
 
         section {
             text-align: center;
-            padding: 54px 0 46px;
-            width: 660px;
+            /*padding: 54px 0 46px;*/
+            min-width: 320px;
             margin: 0 auto;
         }
 
@@ -55,18 +54,19 @@
         }
 
         .demos ul {
+            display: inline-block;
             list-style: none;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
+            max-width: 700px;
         }
 
         .demos li {
-            margin: 0;
-            float: left;
             display: inline-block;
-            width: 20%;
+            min-width: 140px;
             box-sizing: border-box;
-            box-shadow: 0 0 0 2px #F4F4F4;
+            margin: 0 0 2px 0;
+            box-shadow: 0 0 0 1px #F4F4F4;
         }
 
         .demos ul a {
@@ -92,9 +92,8 @@
         }
 
         .sliderPlaceholder {
-            width: 100%;
-            margin-top: 24px;
-            height: 225px;
+            /*width: 100%;*/
+            /*height: 225px;*/
             transition: height 0.25s;
             background: #e6e7e8;
             box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.12);
@@ -105,8 +104,8 @@
         }
 
         .sliderPlaceholder > div {
-            margin: 0 auto !important;
-            width: 300px;
+            /*margin: 0 auto !important;*/
+            width: 320px;
         }
 
         .logo {
@@ -186,7 +185,7 @@
         <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a></li>
         <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a></li>
         <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation</a></li>
-        <li><a id="noAnimation" href="#" title="Disable slide animation">No animation</a></li>
+        <li><a id="disableAnimation" href="#" title="Disable slide animation">Disable animation</a></li>
         <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a></li>
         <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a></li>
         <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a></li>
@@ -209,8 +208,8 @@
         <li><a id="topCaptions" href="#" title="Override default caption position bottom">Top captions</a></li>
         <li><a id="htmlCaptions" href="#" title="Add html to caption">HTML captions</a></li>
         <li><a id="disableCaptions" href="#" title="Disable captions on all slides">Disable captions</a></li>
-        <li><a id="firstSlide" href="#" title="Shift slides to make slide number 2 the first slide">First slide 2</a></li>
-        <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Start at slide 4</a></li>
+        <li><a id="setFirstSlide" href="#" title="Shift slides to make slide number 2 the first slide">Set first slide</a></li>
+        <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Set active slide</a></li>
         <li><a id="reverseWheelNav" href="#" title="Reverse slide direction on wheel up/down">Reverse wheel nav</a></li>
         <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel nav</a></li>
         <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
@@ -228,7 +227,7 @@ var Slider, embedSlider;
 
 function demoSlider() {
 
-    var embed = document.querySelector('.promoContent.embed');
+    var embed = document.querySelector('.promoContentWrap.embed');
 
     if (embed && arguments.length && arguments[0][0] === 'appendTo') {
         embed.parentNode.removeChild(embed);
@@ -236,7 +235,7 @@ function demoSlider() {
     }
 
     var o = {
-        rootDir: 'https://raw.githubusercontent.com/rolandtoth/PromoSlider/master/images/',
+//        rootDir: 'https://raw.githubusercontent.com/rolandtoth/PromoSlider/master/images/',
         rootDir: 'images/',
         slides: [
             ['01.jpg', '#next', '', 'Slide 1: click for next slide'],
@@ -396,8 +395,10 @@ document.getElementById('rewind').onclick = function () {
 
 // action buttons
 document.getElementById('action').onclick = function () {
-    demoSlider(['actionButtons', [
-        ['GitHub', 'https://github.com/rolandtoth/PromoSlider', '_blank', 'github'],
+    demoSlider(
+//            ['vertical', true],
+            ['actionButtons', [
+//        ['GitHub', 'https://github.com/rolandtoth/PromoSlider', '_blank', 'github'],
         ['#3', '#slide3', '', ''],
         ['Fullscreen', '#fullscreen', '', ''],
         ['Prev', '#prev', '', ''],
@@ -434,7 +435,7 @@ document.getElementById('linear').onclick = function () {
 };
 
 // no animation
-document.getElementById('noAnimation').onclick = function () {
+document.getElementById('disableAnimation').onclick = function () {
     demoSlider(['slideDuration', 0], ['fadeInDuration', 0], ['fadeOutDuration', 0]);
     return false;
 };
@@ -470,7 +471,7 @@ document.getElementById('disableCaptions').onclick = function () {
 };
 
 // first slide 2
-document.getElementById('firstSlide').onclick = function () {
+document.getElementById('setFirstSlide').onclick = function () {
     demoSlider(['firstSlide', 2]);
     return false;
 };
