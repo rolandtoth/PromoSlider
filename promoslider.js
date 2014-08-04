@@ -1174,8 +1174,13 @@ function PromoSlider(o) {
                 return false;
             }
 
-            if (!o.infinite && index > o.slideNum - 1) {
-                return false;
+            if (index > o.slideNum - 1) {
+
+                if (!o.infinite) {
+                    return false;
+                }
+
+                index = 0;
             }
 
             offset = index - o.current;
