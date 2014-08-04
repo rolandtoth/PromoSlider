@@ -150,8 +150,8 @@
   -moz-opacity: 1 !important;
   opacity: 1 !important;
 }
-.promoContainer.interstitial.interstitial * {
-  color: #000000;
+.promoContainer.interstitial .promoCpption {
+  color: #ffffff;
 }
 .promoContainer.fullscreen {
   padding: 0;
