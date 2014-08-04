@@ -201,6 +201,10 @@
   top: auto;
   bottom: 2.5%;
 }
+.promoContainer.fullscreen .promoPager.progress {
+  padding: 0 33%;
+  left: 0;
+}
 .promoContainer.fullscreen .promoPager.progress a span {
   background: #ffffff;
 }
@@ -546,6 +550,7 @@
   text-align: center;
   height: 100%;
   display: inline-block;
+  text-decoration: none;
   zoom: 1;
   filter: alpha(opacity=50);
   -webkit-opacity: 0.5;
@@ -647,6 +652,10 @@
 }
 .promoContentWrap .promoPager.progress {
   display: table;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 20%;
+  left: 48px;
 }
 .promoContentWrap .promoPager.progress a {
   padding: 0 1px;
