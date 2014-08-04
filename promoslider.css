@@ -167,12 +167,12 @@
 .promoContainer.fullscreen .actionButtons {
   margin: 0;
   position: absolute;
-  bottom: 3%;
+  bottom: 2.5%;
   top: auto;
 }
 .promoContainer.fullscreen .actionButtons.top {
   bottom: auto;
-  top: 3%;
+  top: 2.5%;
 }
 .promoContainer.fullscreen .promoPrev,
 .promoContainer.fullscreen .promoNext {
@@ -186,20 +186,20 @@
 }
 .promoContainer.fullscreen .promoClose {
   right: 48px;
-  top: 3%;
+  top: 2.5%;
   bottom: auto;
 }
 .promoContainer.fullscreen .promoCounter {
-  top: 3%;
+  top: 2.5%;
   bottom: auto;
 }
 .promoContainer.fullscreen .promoPager {
-  top: 3%;
+  top: 2.5%;
   bottom: auto;
 }
 .promoContainer.fullscreen .promoPager.bottom {
   top: auto;
-  bottom: 3%;
+  bottom: 2.5%;
 }
 .promoContainer.fullscreen .promoPager.progress a span {
   background: #ffffff;
@@ -318,6 +318,7 @@
   bottom: 0;
   padding: 20px 24px;
   margin: 0;
+  background: #777;
   background: rgba(0, 0, 0, 0.5);
   line-height: 1.5;
 }

@@ -1,7 +1,7 @@
 /*!
  * PromoSlider v1.0 - JavaScript Image Slider
  * https://github.com/rolandtoth/PromoSlider
- * last update: 2014.08.03.
+ * last update: 2014.08.04.
  *
  * Licensed under the MIT license
  * Copyright 2014 Roland Toth (tpr)
@@ -13,6 +13,7 @@
 /*jslint sloppy: true */
 
 var supportsTransitions = (function () {
+
     var s = document.createElement('p').style,
         v = ['ms', 'O', 'Moz', 'Webkit'];
 
@@ -20,8 +21,12 @@ var supportsTransitions = (function () {
         return true;
     }
 
+    if (!document.addEventListener) {
+        return false;
+    }
+
     while (v.length) {
-        if (document.addEventListener && s.hasOwnProperty(v.pop() + 'Transition')) {
+        if (s.hasOwnProperty(v.pop() + 'Transition')) {
             return true;
         }
     }
@@ -634,7 +639,10 @@ function PromoSlider(o) {
             o.interstitialText = o.interstitialText.replace('%s', s.promo.interstitialDurationCounter);
 
             s.promo.interstitialText = makeElement('p', {'class': 'interstitialText'}, '&nbsp;' + o.interstitialText);
-            s.promo.interstitialSkipText = makeElement('a', {'class': 'interstitialSkipText', href: '#'}, o.interstitialSkipText);
+            s.promo.interstitialSkipText = makeElement('a', {
+                'class': 'interstitialSkipText',
+                href: '#'
+            }, o.interstitialSkipText);
 
             s.promo.interstitialText.insertBefore(s.promo.interstitialSkipText, s.promo.interstitialText.firstChild);
             s.promo.container.appendChild(s.promo.interstitialText);

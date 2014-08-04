@@ -37,13 +37,13 @@
             font-family: Arial, sans-serif;
         }
 
-        section {
+        body > div {
             text-align: center;
             min-width: 320px;
             margin: 0 auto;
         }
 
-        section:empty {
+        div:empty {
             padding: 0;
             margin: 0;
         }
@@ -103,6 +103,7 @@
 
         .sliderPlaceholder > div {
             width: 320px;
+            height: 240px;
         }
 
         .logo {
@@ -170,9 +171,9 @@
     CSS3 powered JavaScript image slider
 </p>
 
-<section class="sliderPlaceholder"></section>
+<div class="sliderPlaceholder"></div>
 
-<section class="demos">
+<div class="demos">
 
     <ul class="group">
         <li><a id="embed" class="active" href="#" title="Add or remove embedded slider">Toggle embed</a></li>
@@ -181,12 +182,14 @@
         <li><a id="fade" href="#" title="Set slide effect to fade">Fade</a></li>
         <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a></li>
         <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a></li>
-        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation</a></li>
+        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait
+            animation</a></li>
         <li><a id="disableAnimation" href="#" title="Disable slide animation">Disable animation</a></li>
         <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a></li>
         <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a></li>
         <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a></li>
-        <li><a id="fullscreenStretch" href="#" title="Fullscreen slider with images stretched to full width and height">Fullscreen stretch</a></li>
+        <li><a id="fullscreenStretch" href="#" title="Fullscreen slider with images stretched to full width and height">Fullscreen
+            stretch</a></li>
         <li><a id="interstitial" href="#" title="Set slider style to interstitial">Interstitial</a></li>
         <li><a id="customClose" href="#" title="Use custom close button text">Custom close</a></li>
         <li><a id="customSize" href="#" title="Set custom slider size">Custom size</a></li>
@@ -205,10 +208,12 @@
         <li><a id="topCaptions" href="#" title="Override default caption position bottom">Top captions</a></li>
         <li><a id="htmlCaptions" href="#" title="Add html to caption">HTML captions</a></li>
         <li><a id="disableCaptions" href="#" title="Disable captions on all slides">Disable captions</a></li>
-        <li><a id="setFirstSlide" href="#" title="Shift slides to make slide number 2 the first slide">Set first slide</a></li>
+        <li><a id="setFirstSlide" href="#" title="Shift slides to make slide number 2 the first slide">Set first
+            slide</a></li>
         <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Set active slide</a></li>
         <li><a id="reverseWheelNav" href="#" title="Reverse slide direction on wheel up/down">Reverse wheel nav</a></li>
-        <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel nav</a></li>
+        <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel
+            nav</a></li>
         <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
     </ul>
 
@@ -216,7 +221,7 @@
         <a href="https://github.com/rolandtoth/PromoSlider" target="_blank" class="logo">PromoSlider</a>
     </p>
 
-</section>
+</div>
 
 <script type="text/javascript">
 
@@ -255,13 +260,15 @@ function demoSlider() {
 }
 
 embedSlider = function () {
+
     demoSlider(
             ['appendTo', '.sliderPlaceholder'],
             ['pagerPosition', 'bottom'],
             ['actionButtonsPosition', 'top'],
-            ['actionButtons', [
-                ['Toggle lightbox view', '#lightbox']
-            ]
+            ['actionButtons',
+                [
+                    ['Toggle lightbox view', '#lightbox']
+                ]
             ]);
 
     this.className = this.className === 'active' ? '' : 'active';
@@ -396,14 +403,14 @@ document.getElementById('action').onclick = function () {
 //            ['vertical', true],
             ['actionButtons', [
 //        ['GitHub', 'https://github.com/rolandtoth/PromoSlider', '_blank', 'github'],
-        ['#3', '#slide3', '', ''],
-        ['Fullscreen', '#fullscreen', '', ''],
-        ['Prev', '#prev', '', ''],
-        ['Next', '#next', '', ''],
-        ['First', '#first', '', ''],
-        ['Last', '#last', '', ''],
-        ['Close']
-    ]]);
+                ['#3', '#slide3', '', ''],
+                ['Fullscreen', '#fullscreen', '', ''],
+                ['Prev', '#prev', '', ''],
+                ['Next', '#next', '', ''],
+                ['First', '#first', '', ''],
+                ['Last', '#last', '', ''],
+                ['Close']
+            ]]);
     return false;
 };
 
