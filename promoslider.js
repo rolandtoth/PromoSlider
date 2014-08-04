@@ -1017,6 +1017,13 @@ function PromoSlider(o) {
             obj.style.display = 'none';
             tmp = obj.offsetHeight;
             obj.removeAttribute('style');
+
+            obj = document.querySelector('.current');
+
+            obj.style.display = 'none';
+            tmp = obj.offsetWidth;
+            obj.style.display = 'inline-block';
+
             return tmp;
         }
     };

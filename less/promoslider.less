@@ -134,11 +134,31 @@
     .promoCaption {
       color: @color1;
     }
-    .promoPager.progress a span {
-      background: @color2;
+    .promoPager.progress {
+      a {
+        span {
+          background: @color2;
+        }
+        &.active ~ a {
+          span {
+            .opacity(.25);
+          }
+        }
+        &:hover {
+          ~ a span {
+          .opacity(0.25) !important;
+          }
+        }
+      }
+      &:hover {
+        a span {
+          background: @color2 !important;
+          .opacity(1) !important;
+        }
+      }
     }
-    .promoPager.progress a.active ~ a {
-      .opacity(.25);
+    &.interstitial * {
+      color: @color2;
     }
   }
   &.fullscreen {
@@ -203,8 +223,6 @@
         bottom: 2.5%;
       }
       &.progress {
-        padding: 0 33%;
-        left: 0;
         a span {
           background: @color1;
         }
@@ -589,10 +607,9 @@
     }
     &.progress {
       display: table;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0 20%;
-      left: 48px;
+      width: 300px;
+      left: 50%;
+      margin-left: -150px;
       a {
         padding: 0 1px;
         display: table-cell;
@@ -609,6 +626,16 @@
           span {
             background: @color2;
           }
+        }
+        &:hover {
+          ~ a span {
+            background: @color2 !important;
+          }
+        }
+      }
+      &:hover {
+        a span {
+          background: @color1 !important;
         }
       }
     }
