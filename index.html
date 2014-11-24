@@ -6,11 +6,12 @@
 
     <link rel="shortcut icon" type="image/ico" href="promoslider.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <script src="promoslider.js" type="text/javascript"></script>
-
     <link rel="stylesheet" href="promoslider.css" type="text/css" media="screen,projection">
+
+    <script src="promoslider.js" type="text/javascript"></script>
 
     <style type="text/css">
 
@@ -20,6 +21,7 @@
             background: #f4f4f4;
             margin: 0;
             padding: 0;
+            min-width: 320px;
         }
 
         h1 {
@@ -39,7 +41,6 @@
 
         body > div {
             text-align: center;
-            min-width: 320px;
             margin: 0 auto;
         }
 
@@ -57,15 +58,15 @@
             list-style: none;
             margin: 0 auto;
             padding: 0;
-            max-width: 700px;
+            max-width: 660px;
         }
 
         .demos li {
             display: inline-block;
-            min-width: 140px;
+            min-width: 160px;
             box-sizing: border-box;
-            margin: 0 0 2px 0;
-            box-shadow: 0 0 0 1px #F4F4F4;
+            margin: 0 -2px 0;
+            box-shadow: 0 0 0 2px #F4F4F4;
         }
 
         .demos ul a {
@@ -91,19 +92,8 @@
         }
 
         .sliderPlaceholder {
-            height: 336px;
-            transition: height 0.25s;
             background: #e6e7e8;
             box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.12);
-        }
-
-        .sliderPlaceholder:empty {
-            height: 0;
-        }
-
-        .sliderPlaceholder > div {
-            width: 320px;
-            height: 240px;
         }
 
         .logo {
@@ -148,19 +138,6 @@
             opacity: 1;
         }
 
-        .group:before, .group:after {
-            content: "";
-            display: table;
-        }
-
-        .group:after {
-            clear: both;
-        }
-
-        .group {
-            zoom: 1;
-        }
-
     </style>
 </head>
 <body>
@@ -175,46 +152,79 @@
 
 <div class="demos">
 
-    <ul class="group">
-        <li><a id="embed" class="active" href="#" title="Add or remove embedded slider">Toggle embed</a></li>
-        <li><a id="horizontal" href="#" title="Set slide animation direction to horizontal">Horizontal</a></li>
-        <li><a id="vertical" href="#" title="Set slide animation direction to vertical">Vertical</a></li>
-        <li><a id="fade" href="#" title="Set slide effect to fade">Fade</a></li>
-        <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a></li>
-        <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a></li>
-        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait
-            animation</a></li>
-        <li><a id="disableAnimation" href="#" title="Disable slide animation">Disable animation</a></li>
-        <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a></li>
-        <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a></li>
-        <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a></li>
-        <li><a id="fullscreenStretch" href="#" title="Fullscreen slider with images stretched to full width and height">Fullscreen
-            stretch</a></li>
-        <li><a id="interstitial" href="#" title="Set slider style to interstitial">Interstitial</a></li>
-        <li><a id="customClose" href="#" title="Use custom close button text">Custom close</a></li>
-        <li><a id="customSize" href="#" title="Set custom slider size">Custom size</a></li>
-        <li><a id="randomize" href="#" title="Show slides in random order">Randomize</a></li>
-        <li><a id="randomOne" href="#" title="Pick one random slide from available slides">Random one</a></li>
-        <li><a id="thumb" href="#" title="Show image thumbnails as pager items">Thumb pager</a></li>
-        <li><a id="numeric" href="#" title="Show slide numbers in pager instead of bullets">Numeric pager</a></li>
-        <li><a id="progress" href="#" title="Show progressbar style pager">Progress pager</a></li>
-        <li><a id="counter" href="#" title="Add slide counter">Counter</a></li>
-        <li><a id="customCounter" href="#" title="Use custom counter text template">Custom counter</a></li>
-        <li><a id="finite" href="#" title="Disable going to first slide after last slide">Finite</a></li>
-        <li><a id="rewind" href="#" title="Rewind slider after last slide">Rewind on end</a></li>
-        <li><a id="hoverControls" href="#" title="Show controls only on hovering the slider">Hover controls</a></li>
-        <li><a id="insideControls" href="#" title="Show controls inside slider boundaries">Inside controls</a></li>
-        <li><a id="hideControls" href="#" title="Hide controls (use ESC key to close)">Hide controls</a></li>
-        <li><a id="topCaptions" href="#" title="Override default caption position bottom">Top captions</a></li>
-        <li><a id="htmlCaptions" href="#" title="Add html to caption">HTML captions</a></li>
-        <li><a id="disableCaptions" href="#" title="Disable captions on all slides">Disable captions</a></li>
-        <li><a id="setFirstSlide" href="#" title="Shift slides to make slide number 2 the first slide">Set first
-            slide</a></li>
-        <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Set active slide</a></li>
-        <li><a id="reverseWheelNav" href="#" title="Reverse slide direction on wheel up/down">Reverse wheel nav</a></li>
-        <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel
-            nav</a></li>
-        <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a></li>
+    <ul>
+        <li><a id="embed" class="active" href="#" title="Add or remove embedded slider">Toggle embed</a>
+        </li>
+        <li><a id="horizontal" href="#" title="Set slide animation direction to horizontal">Horizontal slide</a>
+        </li>
+        <li><a id="vertical" href="#" title="Set slide animation direction to vertical">Vertical slide</a>
+        </li>
+        <li><a id="fade" href="#" title="Set slide effect to fade">Fade effect</a>
+        </li>
+        <li><a id="autoPlay" href="#" title="Set slider to play automatically">Auto play</a>
+        </li>
+        <li><a id="linear" href="#" title="Set animation timing function to linear">Linear animation</a>
+        </li>
+        <li><a id="waitAnimation" href="#" title="Go to next slide only if previous animation is completed">Wait animation</a>
+        </li>
+        <li><a id="disableAnimation" href="#" title="Disable slide animation">Disable animation</a>
+        </li>
+        <li><a id="action" href="#" title="Add custom links below slider">Action buttons</a>
+        </li>
+        <li><a id="modal" href="#" title="Overlay click close is disabled">Modal</a>
+        </li>
+        <li><a id="fullscreen" href="#" title="Show slider in fullscreen mode">Fullscreen</a>
+        </li>
+        <li><a id="fullscreenStretch" href="#" title="Fullscreen slider with images stretched to full width and height">Fullscreen stretch</a>
+        </li>
+        <li><a id="interstitial" href="#" title="Set slider style to interstitial">Interstitial</a>
+        </li>
+        <li><a id="customClose" href="#" title="Use custom close button text">Custom close</a>
+        </li>
+        <li><a id="customSize" href="#" title="Set custom slider size">Custom size</a>
+        </li>
+        <li><a id="randomize" href="#" title="Show slides in random order">Randomize</a>
+        </li>
+        <li><a id="randomOne" href="#" title="Pick one random slide from available slides">Random one</a>
+        </li>
+        <li><a id="thumb" href="#" title="Show image thumbnails as pager items">Thumb pager</a>
+        </li>
+        <li><a id="numeric" href="#" title="Show slide numbers in pager instead of bullets">Numeric pager</a>
+        </li>
+        <li><a id="progress" href="#" title="Show progressbar style pager">Progress pager</a>
+        </li>
+        <li><a id="counter" href="#" title="Add slide counter">Counter</a>
+        </li>
+        <li><a id="customCounter" href="#" title="Use custom counter text template">Custom counter</a>
+        </li>
+        <li><a id="finite" href="#" title="Disable going to first slide after last slide">Finite</a>
+        </li>
+        <li><a id="rewind" href="#" title="Rewind slider after last slide">Rewind on end</a>
+        </li>
+        <li><a id="hoverControls" href="#" title="Show controls only on hovering the slider">Hover controls</a>
+        </li>
+        <li><a id="insideControls" href="#" title="Show controls inside slider boundaries">Inside controls</a>
+        </li>
+        <li><a id="hideControls" href="#" title="Hide controls (use ESC key to close)">Hide controls</a>
+        </li>
+        <li><a id="topCaptions" href="#" title="Override default caption position bottom">Top captions</a>
+        </li>
+        <li><a id="htmlCaptions" href="#" title="Add html to caption">HTML captions</a>
+        </li>
+        <li><a id="disableCaptions" href="#" title="Disable captions on all slides">Disable captions</a>
+        </li>
+        <li><a id="maxSlides" href="#" title="Display only 3 slides out of all slides">Max slides</a>
+        </li>
+        <li><a id="setFirstSlide" href="#" title="Shift slides to make slide number 2 the first slide">Set first slide</a>
+        </li>
+        <li><a id="activeSlide" href="#" title="Start slider scrolled to slide number 4">Set active slide</a>
+        </li>
+        <li><a id="reverseWheelNav" href="#" title="Reverse slide direction on wheel up/down">Reverse wheel nav</a>
+        </li>
+        <li><a id="disableWheelNav" href="#" title="Disable navigation using mouse the mouse wheel">Disable wheel nav</a>
+        </li>
+        <li><a id="callback" href="#" title="Execute custom functions on start, click and close">Callbacks</a>
+        </li>
     </ul>
 
     <p>
@@ -237,17 +247,17 @@ function demoSlider() {
     }
 
     var o = {
-//        rootDir: 'https://raw.githubusercontent.com/rolandtoth/PromoSlider/master/images/',
         rootDir: 'images/',
         slides: [
             ['01.jpg', '#next', '', 'Slide 1: click for next slide'],
             ['02.jpg', '#last', '', 'Slide 2: click for last slide'],
             ['03.jpg', 'https://github.com/rolandtoth/PromoSlider', '_blank', 'Slide 3: click to visit GitHub'],
-            ['04.jpg', '#first', '', 'Slide 4: click for first slide'],
+            ['04.jpg', '', '', 'Slide 4: image-only'],
             ['05.jpg', '#fullscreen', '', 'Slide 5: click to toggle fullscreen mode']
         ],
         modal: false,
-        slideDuration: 0.8,
+        customClass: 'demoSlider',
+        slideDuration: 0.66,
         fadeInDuration: 0.5,
         fadeOutDuration: 0.25
     }, i;
@@ -263,6 +273,7 @@ embedSlider = function () {
 
     demoSlider(
             ['appendTo', '.sliderPlaceholder'],
+            ['height', '240px'],
             ['pagerPosition', 'bottom'],
             ['actionButtonsPosition', 'top'],
             ['actionButtons',
@@ -400,7 +411,7 @@ document.getElementById('rewind').onclick = function () {
 // action buttons
 document.getElementById('action').onclick = function () {
     demoSlider(
-//            ['vertical', true],
+            ['vertical', true],
             ['actionButtons', [
 //        ['GitHub', 'https://github.com/rolandtoth/PromoSlider', '_blank', 'github'],
                 ['#3', '#slide3', '', ''],
@@ -434,7 +445,7 @@ document.getElementById('insideControls').onclick = function () {
 
 // linear animation
 document.getElementById('linear').onclick = function () {
-    demoSlider(['easing', 'linear'], ['slideDuration', 0.6]);
+    demoSlider(['easing', 'linear'], ['slideDuration', 0.36]);
     return false;
 };
 
@@ -498,6 +509,12 @@ document.getElementById('disableWheelNav').onclick = function () {
     return false;
 };
 
+// set max number of slides
+document.getElementById('maxSlides').onclick = function () {
+    demoSlider(['maxSlides', 3]);
+    return false;
+};
+
 // callback
 document.getElementById('callback').onclick = function () {
 
@@ -522,6 +539,14 @@ document.getElementById('callback').onclick = function () {
 
             ['onPromoClose', function () {
                 alert('PromoSlider is closing...');
+            }],
+
+            ['onPromoAnimStart', function () {
+                alert('animation starting');
+            }],
+
+            ['onPromoAnimFinish', function () {
+                alert('animation finished');
             }]
     );
     return false;
